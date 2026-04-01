@@ -16,120 +16,245 @@
                         sans: ['Outfit', 'Noto Sans SC', 'sans-serif'],
                     },
                     colors: {
-                        primary: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                        },
-                        accent: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            200: '#bbf7d0',
-                            300: '#86efac',
-                            400: '#4ade80',
-                            500: '#22c55e',
+                        neon: {
+                            cyan: '#00f0ff',
+                            purple: '#7b61ff',
+                            dark: '#0a0a0f',
+                            card: '#111118',
+                            border: 'rgba(0,240,255,0.15)',
                         }
                     },
                     animation: {
-                        'float': 'float 6s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'shimmer': 'shimmer 2s linear infinite',
+                        'scan': 'scan 8s linear infinite',
+                        'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
+                        'cursor-blink': 'cursor-blink 1s step-end infinite',
+                        'border-flow': 'border-flow 3s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
                     },
                     keyframes: {
+                        scan: {
+                            '0%': { top: '-2px' },
+                            '100%': { top: '100%' },
+                        },
+                        'glow-pulse': {
+                            '0%, 100%': { opacity: '0.4' },
+                            '50%': { opacity: '1' },
+                        },
+                        'cursor-blink': {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        },
+                        'border-flow': {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                            '100%': { backgroundPosition: '0% 50%' },
+                        },
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-20px)' },
                         },
-                        shimmer: {
-                            '0%': { backgroundPosition: '-1000px 0' },
-                            '100%': { backgroundPosition: '1000px 0' },
-                        }
                     }
                 }
             }
         }
     </script>
     <style>
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        /* ===== 基础暗色主题 ===== */
+        body {
+            background-color: #0a0a0f;
+            color: #f1f5f9;
+            font-family: 'Outfit', 'Noto Sans SC', sans-serif;
         }
-        
+
+        /* ===== 背景：星空 + 网格 + 扫描线 ===== */
+        .bg-space {
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+            overflow: hidden;
+        }
+        .bg-space::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(1px 1px at 10% 20%, rgba(0,240,255,0.4), transparent),
+                radial-gradient(1px 1px at 30% 60%, rgba(123,97,255,0.3), transparent),
+                radial-gradient(1px 1px at 50% 10%, rgba(0,240,255,0.2), transparent),
+                radial-gradient(1px 1px at 70% 40%, rgba(123,97,255,0.3), transparent),
+                radial-gradient(1px 1px at 90% 80%, rgba(0,240,255,0.4), transparent),
+                radial-gradient(1.5px 1.5px at 15% 85%, rgba(0,240,255,0.5), transparent),
+                radial-gradient(1px 1px at 45% 45%, rgba(123,97,255,0.2), transparent),
+                radial-gradient(1.5px 1.5px at 80% 15%, rgba(0,240,255,0.3), transparent),
+                radial-gradient(1px 1px at 60% 70%, rgba(123,97,255,0.4), transparent),
+                radial-gradient(1px 1px at 25% 35%, rgba(0,240,255,0.2), transparent),
+                radial-gradient(1px 1px at 85% 55%, rgba(123,97,255,0.3), transparent),
+                radial-gradient(1.5px 1.5px at 5% 50%, rgba(0,240,255,0.4), transparent),
+                radial-gradient(1px 1px at 40% 90%, rgba(123,97,255,0.2), transparent),
+                radial-gradient(1px 1px at 65% 25%, rgba(0,240,255,0.3), transparent),
+                radial-gradient(1px 1px at 95% 45%, rgba(123,97,255,0.4), transparent),
+                radial-gradient(1px 1px at 20% 70%, rgba(0,240,255,0.2), transparent),
+                radial-gradient(1.5px 1.5px at 55% 55%, rgba(123,97,255,0.3), transparent),
+                radial-gradient(1px 1px at 75% 90%, rgba(0,240,255,0.4), transparent),
+                radial-gradient(1px 1px at 35% 5%, rgba(123,97,255,0.2), transparent),
+                radial-gradient(1px 1px at 5% 95%, rgba(0,240,255,0.3), transparent);
+        }
+        .bg-space::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0,240,255,0.15), transparent);
+            animation: scan 8s linear infinite;
+            box-shadow: 0 0 20px rgba(0,240,255,0.1);
+        }
+
+        /* ===== 荧光网格叠加 ===== */
+        .grid-neon {
+            background-image:
+                linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* ===== 渐变文字 ===== */
         .gradient-text {
-            background: linear-gradient(135deg, #0ea5e9 0%, #22c55e 100%);
+            background: linear-gradient(135deg, #00f0ff 0%, #7b61ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
-        .card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* ===== 卡片基础 ===== */
+        .card-dark {
+            background: #111118;
+            border: 1px solid rgba(0,240,255,0.1);
+            transition: all 0.3s ease;
         }
-        
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px -10px rgba(14, 165, 233, 0.15), 0 10px 20px -5px rgba(34, 197, 94, 0.1);
+        .card-dark:hover {
+            border-color: rgba(0,240,255,0.35);
+            box-shadow: 0 0 25px rgba(0,240,255,0.06), inset 0 0 25px rgba(0,240,255,0.02);
         }
-        
-        .blob {
-            position: absolute;
-            filter: blur(80px);
-            z-index: -1;
-            opacity: 0.4;
+
+        /* ===== 导航栏 ===== */
+        .nav-glass {
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,240,255,0.1);
         }
-        
+
+        /* ===== 按钮辉光 ===== */
+        .btn-glow {
+            background: linear-gradient(135deg, #00f0ff, #7b61ff);
+            transition: all 0.3s ease;
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 25px rgba(0,240,255,0.4), 0 0 50px rgba(123,97,255,0.2);
+            transform: scale(1.05);
+        }
+
+        /* ===== 技能条光尾 ===== */
+        .skill-bar-glow {
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        /* ===== 打字机光标 ===== */
+        .typewriter-cursor::after {
+            content: '|';
+            animation: cursor-blink 1s step-end infinite;
+            color: #00f0ff;
+            font-weight: 300;
+        }
+
+        /* ===== 滚动渐入 ===== */
         .scroll-reveal {
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.8s ease-out;
         }
-        
         .scroll-reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
-        
-        .grid-pattern {
-            background-image: radial-gradient(circle, #e0f2fe 1px, transparent 1px);
-            background-size: 24px 24px;
+
+        /* ===== 鼠标跟随光点 ===== */
+        .cursor-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,240,255,0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -5;
+            transform: translate(-50%, -50%);
+            transition: left 0.3s ease, top 0.3s ease;
+        }
+
+        /* ===== 输入框暗色 ===== */
+        .input-dark {
+            background: #111118;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #f1f5f9;
+            transition: all 0.3s ease;
+        }
+        .input-dark:focus {
+            border-color: #00f0ff;
+            box-shadow: 0 0 12px rgba(0,240,255,0.15);
+            outline: none;
+        }
+        .input-dark::placeholder {
+            color: #4b5563;
+        }
+
+        /* ===== 终端卡头部小圆点 ===== */
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .terminal-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* ===== 装饰线 ===== */
+        .line-cyan {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00f0ff, transparent);
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-x-hidden">
+<body class="antialiased overflow-x-hidden">
 
-    <!-- 背景装饰元素 -->
-    <div class="blob bg-blue-200 w-96 h-96 rounded-full top-0 left-0 animate-pulse-slow"></div>
-    <div class="blob bg-emerald-100 w-80 h-80 rounded-full bottom-0 right-0 animate-pulse-slow" style="animation-delay: 2s;"></div>
-    <div class="blob bg-cyan-100 w-64 h-64 rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse-slow" style="animation-delay: 4s;"></div>
+    <!-- 背景层 -->
+    <div class="bg-space"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
 
     <!-- 导航栏 -->
-    <nav class="fixed top-0 w-full z-50 glass-effect border-b border-white/20 transition-all duration-300" id="navbar">
+    <nav class="fixed top-0 w-full z-50 nav-glass transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer group">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-emerald-400 flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform shadow-[0_0_12px_rgba(0,240,255,0.3)]">
                         
                     </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-700">Moyu Chen</span>
+                    <span class="font-bold text-xl tracking-wider text-gray-100">Moyu Chen</span>
                 </div>
                 
                 <div class="hidden md:flex space-x-8">
-                    <a href="#home" class="text-slate-600 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">首页</a>
-                    <a href="#about" class="text-slate-600 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">关于</a>
-                    <a href="#skills" class="text-slate-600 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">技能</a>
-                    <a href="#projects" class="text-slate-600 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">作品</a>
-                    <a href="#contact" class="bg-gradient-to-r from-blue-400 to-emerald-400 text-white px-5 py-2 rounded-full text-sm font-medium hover:shadow-lg hover:shadow-blue-200 transition-all transform hover:scale-105">联系我</a>
+                    <a href="#home" class="text-gray-400 hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors tracking-wide">首页</a>
+                    <a href="#about" class="text-gray-400 hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors tracking-wide">关于</a>
+                    <a href="#skills" class="text-gray-400 hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors tracking-wide">技能</a>
+                    <a href="#projects" class="text-gray-400 hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors tracking-wide">作品</a>
+                    <a href="#contact" class="btn-glow text-white px-5 py-2 rounded-full text-sm font-medium">联系我</a>
                 </div>
 
-                <!-- 移动端菜单按钮 -->
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-blue-500 focus:outline-none">
+                    <button id="mobile-menu-btn" class="text-gray-400 hover:text-cyan-400 focus:outline-none">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -138,97 +263,116 @@
             </div>
         </div>
 
-        <!-- 移动端菜单 -->
-        <div id="mobile-menu" class="hidden md:hidden glass-effect border-t border-white/20">
+        <div id="mobile-menu" class="hidden md:hidden nav-glass border-t border-cyan-500/10">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#home" class="block text-slate-600 hover:text-blue-500 px-3 py-2 rounded-md text-base font-medium">首页</a>
-                <a href="#about" class="block text-slate-600 hover:text-blue-500 px-3 py-2 rounded-md text-base font-medium">关于</a>
-                <a href="#skills" class="block text-slate-600 hover:text-blue-500 px-3 py-2 rounded-md text-base font-medium">技能</a>
-                <a href="#projects" class="block text-slate-600 hover:text-blue-500 px-3 py-2 rounded-md text-base font-medium">作品</a>
-                <a href="#contact" class="block bg-gradient-to-r from-blue-400 to-emerald-400 text-white px-3 py-2 rounded-md text-base font-medium mt-4">联系我</a>
+                <a href="#home" class="block text-gray-400 hover:text-cyan-400 px-3 py-2 rounded-md text-base font-medium">首页</a>
+                <a href="#about" class="block text-gray-400 hover:text-cyan-400 px-3 py-2 rounded-md text-base font-medium">关于</a>
+                <a href="#skills" class="block text-gray-400 hover:text-cyan-400 px-3 py-2 rounded-md text-base font-medium">技能</a>
+                <a href="#projects" class="block text-gray-400 hover:text-cyan-400 px-3 py-2 rounded-md text-base font-medium">作品</a>
+                <a href="#contact" class="block btn-glow text-white px-3 py-2 rounded-md text-base font-medium mt-4">联系我</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center">
+    <section id="home" class="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center grid-neon">
         <div class="max-w-7xl mx-auto w-full">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <!-- 左侧文字内容 -->
+                <!-- 左侧 -->
                 <div class="lg:col-span-7 space-y-8 scroll-reveal">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-sm font-medium">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-500/20 bg-cyan-500/5 text-cyan-400 text-sm font-medium">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
                         </span>
-                        欢迎访问MoyuChen的个人主页 
+                        SYS.ONLINE — 欢迎访问MoyuChen的个人主页
                     </div>
                     
-                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight tracking-tight">
+                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight tracking-wider">
                         体验 <span class="gradient-text">科研</span><br>
                         与<span class="gradient-text">工程</span>的旅程
                     </h1>
                     
-                    <p class="text-lg sm:text-xl text-slate-600 max-w-2xl leading-relaxed">
-                        热爱简洁优雅的工程化落地思路，专注于第一性原理以极简方式完成项目。在这里记录我的创意灵感、技术探索与生活感悟。
+                    <p class="text-lg sm:text-xl text-gray-400 max-w-2xl leading-relaxed">
+                        热爱简洁优雅的工程化落地思路，专注于第一性原理以极简方式完成项目。<span class="typewriter-cursor">在这里记录我的创意灵感、技术探索与生活感悟</span>
                     </p>
                     
                     <div class="flex flex-wrap gap-4">
-                        <button onclick="scrollToSection('projects')" class="px-8 py-4 bg-gradient-to-r from-blue-400 to-emerald-400 text-white rounded-full font-semibold shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all transform hover:scale-105 flex items-center gap-2 group">
+                        <button onclick="scrollToSection('projects')" class="btn-glow px-8 py-4 text-white rounded-full font-semibold flex items-center gap-2 group">
                             查看作品
                             <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
                         </button>
-                        <button onclick="scrollToSection('about')" class="px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 rounded-full font-semibold hover:border-blue-300 hover:text-blue-500 transition-all flex items-center gap-2">
+                        <button onclick="scrollToSection('about')" class="px-8 py-4 border-2 border-gray-700 text-gray-300 rounded-full font-semibold hover:border-cyan-500/50 hover:text-cyan-400 transition-all flex items-center gap-2">
                             了解更多
                         </button>
                     </div>
 
                     <div class="flex items-center gap-6 pt-4">
                         <div class="flex -space-x-3">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-white text-blue-600">
+                            <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 text-cyan-400">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                             </div>
-                            <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center border-2 border-white text-emerald-600">
+                            <div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center border border-purple-500/20 text-purple-400">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                             </div>
-                            <div class="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center border-2 border-white text-sky-600">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-                            </div>
                         </div>
-                        <span class="text-sm text-slate-500">github主页:Ayadododo</span>
+                        <span class="text-sm text-gray-500 font-mono">github: Ayadododo</span>
                     </div>
                 </div>
 
-                <!-- 右侧视觉元素 - Bento Grid -->
+                <!-- 右侧终端卡 -->
                 <div class="lg:col-span-5 relative scroll-reveal" style="animation-delay: 0.2s;">
-                    <div class="grid grid-cols-2 gap-4 animate-float">
-                        <div class="space-y-4 mt-8">
-                            <div class="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-lg border border-blue-100 card-hover">
-                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center mb-3">
-                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-                                </div>
-                                <h3 class="font-semibold text-slate-800">算法研发</h3>
-                                <p class="text-xs text-slate-500 mt-1">计科硕士，信息安全方向</p>
+                    <div class="space-y-4">
+                        <!-- 终端卡 1 -->
+                        <div class="card-dark rounded-2xl p-6 animate-float">
+                            <div class="terminal-dots">
+                                <span class="bg-red-500/60"></span>
+                                <span class="bg-yellow-500/60"></span>
+                                <span class="bg-green-500/60"></span>
                             </div>
-                            <div class="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl p-6 shadow-lg text-white card-hover">
-                                <div class="text-3xl font-bold mb-1">1.6</div>
-                                <div class="text-sm opacity-90">年全栈/AI应用开发经验</div>
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-100">算法研发</h3>
+                                    <p class="text-xs text-gray-500">计科硕士 · 信息安全方向</p>
+                                </div>
+                            </div>
+                            <div class="font-mono text-xs text-gray-600">$ loading expertise modules...</div>
+                        </div>
+
+                        <!-- 数值卡 -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="card-dark rounded-2xl p-6 text-center">
+                                <div class="text-3xl font-bold gradient-text mb-1">1.8</div>
+                                <div class="text-xs text-gray-500">年全栈/AI经验</div>
+                            </div>
+                            <div class="card-dark rounded-2xl p-6 text-center">
+                                <div class="text-3xl font-bold gradient-text mb-1">10+</div>
+                                <div class="text-xs text-gray-500">完成项目</div>
                             </div>
                         </div>
-                        <div class="space-y-4">
-                            <div class="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl p-6 shadow-lg text-white card-hover">
-                                <div class="text-3xl font-bold mb-1">10+</div>
-                                <div class="text-sm opacity-90">完成大小项目</div>
+
+                        <!-- 终端卡 2 -->
+                        <div class="card-dark rounded-2xl p-6 animate-float" style="animation-delay: 2s;">
+                            <div class="terminal-dots">
+                                <span class="bg-red-500/60"></span>
+                                <span class="bg-yellow-500/60"></span>
+                                <span class="bg-green-500/60"></span>
                             </div>
-                            <div class="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-lg border border-emerald-100 card-hover">
-                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center mb-3">
-                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
                                 </div>
-                                <h3 class="font-semibold text-slate-800">全栈开发/AI应用</h3>
-                                <p class="text-xs text-slate-500 mt-1">用代码提高效率</p>
+                                <div>
+                                    <h3 class="font-semibold text-gray-100">AI应用开发 / 全栈开发 </h3>
+                                    <p class="text-xs text-gray-500">用代码提高效率</p>
+                                </div>
                             </div>
+                            <div class="font-mono text-xs text-gray-600">$ deploy --env production</div>
                         </div>
                     </div>
                 </div>
@@ -237,41 +381,41 @@
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-20 px-4 sm:px-6 lg:px-8 bg-white/50 relative">
+    <section id="about" class="py-20 px-4 sm:px-6 lg:px-8 relative">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 scroll-reveal">
-                <span class="text-blue-500 font-semibold tracking-wider uppercase text-sm">About Me</span>
-                <h2 class="text-4xl font-bold text-slate-800 mt-2">关于我</h2>
-                <div class="w-20 h-1 bg-gradient-to-r from-blue-400 to-emerald-400 mx-auto mt-4 rounded-full"></div>
+                <span class="text-cyan-400 font-semibold tracking-widest uppercase text-sm">// About Me</span>
+                <h2 class="text-4xl font-bold text-gray-100 mt-2 tracking-wider">关于我</h2>
+                <div class="w-20 h-0.5 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto mt-4 rounded-full"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="glass-effect rounded-3xl p-8 card-hover scroll-reveal">
-                    <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center mb-6">
-                        <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                <div class="card-dark rounded-3xl p-8 scroll-reveal">
+                    <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-3">持续学习</h3>
-                    <p class="text-slate-600 leading-relaxed">
+                    <h3 class="text-xl font-bold text-gray-100 mb-3 tracking-wide">持续学习</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm">
                         热爱探索新技术与设计趋势，保持对前沿知识的敏锐度。相信学习是一生的旅程，每一个项目都是成长的机会。
                     </p>
                 </div>
 
-                <div class="glass-effect rounded-3xl p-8 card-hover scroll-reveal" style="animation-delay: 0.1s;">
-                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center mb-6">
-                        <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <div class="card-dark rounded-3xl p-8 scroll-reveal" style="animation-delay: 0.1s;">
+                    <div class="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-3">协作精神</h3>
-                    <p class="text-slate-600 leading-relaxed">
+                    <h3 class="text-xl font-bold text-gray-100 mb-3 tracking-wide">协作精神</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm">
                         重视团队合作与沟通，善于倾听不同观点。协作和沟通能使得工作效率更高，同时也更能激发团队成员的潜力。
                     </p>
                 </div>
 
-                <div class="glass-effect rounded-3xl p-8 card-hover scroll-reveal" style="animation-delay: 0.2s;">
-                    <div class="w-14 h-14 rounded-2xl bg-cyan-100 flex items-center justify-center mb-6">
-                        <svg class="w-7 h-7 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <div class="card-dark rounded-3xl p-8 scroll-reveal" style="animation-delay: 0.2s;">
+                    <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-3">追求极致</h3>
-                    <p class="text-slate-600 leading-relaxed">
+                    <h3 class="text-xl font-bold text-gray-100 mb-3 tracking-wide">追求极致</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm">
                         注重知识细节与工程极限，力求做到极致。追求卓越的技术水平，不断挑战自我，追求完美。
                     </p>
                 </div>
@@ -284,9 +428,9 @@
         <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div class="scroll-reveal">
-                    <span class="text-emerald-500 font-semibold tracking-wider uppercase text-sm">My Skills</span>
-                    <h2 class="text-4xl font-bold text-slate-800 mt-2 mb-6">技能专长</h2>
-                    <p class="text-slate-600 text-lg leading-relaxed mb-8">
+                    <span class="text-cyan-400 font-semibold tracking-widest uppercase text-sm">// Skills</span>
+                    <h2 class="text-4xl font-bold text-gray-100 mt-2 mb-6 tracking-wider">技能专长</h2>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-8">
                         本科阶段，专长数据结构，计算机网络，Java开发。
                         研究生阶段，研究Matlab、Python深度学习算法。
                         2025年8月工作至今，内容涉及Vue3、微信小程序、LangChain、Ollama、SpringBoot等技术栈，包括服务器运维，数据库设计与建立。
@@ -295,29 +439,29 @@
                     <div class="space-y-6">
                         <div>
                             <div class="flex justify-between mb-2">
-                                <span class="font-medium text-slate-700">后端开发</span>
-                                <span class="text-blue-600 font-semibold">90%</span>
+                                <span class="font-medium text-gray-300 font-mono text-sm">BACKEND</span>
+                                <span class="text-cyan-400 font-semibold font-mono">90%</span>
                             </div>
-                            <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
-                                <div class="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full w-[90%] transition-all duration-1000 ease-out skill-bar"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-2">
-                                <span class="font-medium text-slate-700">前端开发</span>
-                                <span class="text-emerald-600 font-semibold">85%</span>
-                            </div>
-                            <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
-                                <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full w-[85%] transition-all duration-1000 ease-out skill-bar"></div>
+                            <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full w-[90%] transition-all duration-1000 ease-out skill-bar-glow"></div>
                             </div>
                         </div>
                         <div>
                             <div class="flex justify-between mb-2">
-                                <span class="font-medium text-slate-700">算法研发</span>
-                                <span class="text-cyan-600 font-semibold">90%</span>
+                                <span class="font-medium text-gray-300 font-mono text-sm">FRONTEND</span>
+                                <span class="text-cyan-400 font-semibold font-mono">85%</span>
                             </div>
-                            <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
-                                <div class="h-full bg-gradient-to-r from-cyan-400 to-cyan-600 rounded-full w-[90%] transition-all duration-1000 ease-out skill-bar"></div>
+                            <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full w-[85%] transition-all duration-1000 ease-out skill-bar-glow"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium text-gray-300 font-mono text-sm">ALGORITHM</span>
+                                <span class="text-cyan-400 font-semibold font-mono">90%</span>
+                            </div>
+                            <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full w-[90%] transition-all duration-1000 ease-out skill-bar-glow"></div>
                             </div>
                         </div>
                     </div>
@@ -325,27 +469,35 @@
 
                 <div class="grid grid-cols-2 gap-4 scroll-reveal">
                     <div class="space-y-4">
-                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 card-hover group">
-                            <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🎨</div>
-                            <h4 class="font-bold text-slate-800 mb-1">Vue3</h4>
-                            <p class="text-xs text-slate-500">前端开发</p>
+                        <div class="card-dark rounded-2xl p-6 group">
+                            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-3 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-shadow">
+                                <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+                            </div>
+                            <h4 class="font-bold text-gray-100 mb-1">Vue3</h4>
+                            <p class="text-xs text-gray-500">前端开发</p>
                         </div>
-                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 card-hover group">
-                            <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">⚡</div>
-                            <h4 class="font-bold text-slate-800 mb-1">Mysql</h4>
-                            <p class="text-xs text-slate-500">数据库设计</p>
+                        <div class="card-dark rounded-2xl p-6 group">
+                            <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center mb-3 group-hover:shadow-[0_0_15px_rgba(123,97,255,0.2)] transition-shadow">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                            </div>
+                            <h4 class="font-bold text-gray-100 mb-1">MySQL</h4>
+                            <p class="text-xs text-gray-500">数据库设计</p>
                         </div>
                     </div>
                     <div class="space-y-4 mt-8">
-                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 card-hover group">
-                            <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">💻</div>
-                            <h4 class="font-bold text-slate-800 mb-1">SpringBoot</h4>
-                            <p class="text-xs text-slate-500">后端开发</p>
+                        <div class="card-dark rounded-2xl p-6 group">
+                            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-3 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-shadow">
+                                <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+                            </div>
+                            <h4 class="font-bold text-gray-100 mb-1">SpringBoot</h4>
+                            <p class="text-xs text-gray-500">后端开发</p>
                         </div>
-                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 card-hover group">
-                            <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🎯</div>
-                            <h4 class="font-bold text-slate-800 mb-1">LangChain</h4>
-                            <p class="text-xs text-slate-500">AI应用开发</p>
+                        <div class="card-dark rounded-2xl p-6 group">
+                            <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center mb-3 group-hover:shadow-[0_0_15px_rgba(123,97,255,0.2)] transition-shadow">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            </div>
+                            <h4 class="font-bold text-gray-100 mb-1">LangChain</h4>
+                            <p class="text-xs text-gray-500">AI应用开发</p>
                         </div>
                     </div>
                 </div>
@@ -353,81 +505,85 @@
         </div>
     </section>
 
-    <!-- Projects Section - Bento Grid -->
-    <section id="projects" class="py-20 px-4 sm:px-6 lg:px-8 bg-white/50 relative overflow-hidden">
-        <div class="absolute inset-0 grid-pattern opacity-30"></div>
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden grid-neon">
         <div class="max-w-7xl mx-auto relative z-10">
             <div class="text-center mb-16 scroll-reveal">
-                <span class="text-blue-500 font-semibold tracking-wider uppercase text-sm">Portfolio</span>
-                <h2 class="text-4xl font-bold text-slate-800 mt-2">主要项目</h2>
-                <p class="text-slate-600 mt-4 max-w-2xl mx-auto">工业知识库RAG问答系统、公司产品型号管理系统、选型系统</p>
+                <span class="text-cyan-400 font-semibold tracking-widest uppercase text-sm">// Portfolio</span>
+                <h2 class="text-4xl font-bold text-gray-100 mt-2 tracking-wider">主要项目</h2>
+                <p class="text-gray-500 mt-4 max-w-2xl mx-auto font-mono text-sm">工业知识库RAG问答系统 · 产品型号管理系统 · 选型系统</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[200px]">
                 <!-- 大卡片 -->
-                <div class="md:col-span-2 md:row-span-2 glass-effect rounded-3xl overflow-hidden card-hover group relative scroll-reveal">
-                    <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-emerald-50 opacity-50"></div>
+                <div class="md:col-span-2 md:row-span-2 card-dark rounded-3xl overflow-hidden group relative scroll-reveal">
+                    <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div class="relative h-full p-8 flex flex-col justify-between">
                         <div>
-                            <span class="inline-block px-3 py-1 bg-white/80 rounded-full text-xs font-semibold text-blue-600 mb-4">Web Design</span>
-                            <h3 class="text-2xl font-bold text-slate-800 mb-2">公司产品型号管理系统</h3>
-                            <p class="text-slate-600 text-sm leading-relaxed">为本地零售品牌打造的全新电商体验，采用简洁的视觉语言与流畅的交互流程，提升用户转化率 40%。</p>
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold text-cyan-400 border border-cyan-500/20 bg-cyan-500/5 mb-4 font-mono">RAG SYSTEM</span>
+                            <h3 class="text-2xl font-bold text-gray-100 mb-2">公司产品型号管理系统</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">为本地零售品牌打造的全新电商体验，采用简洁的视觉语言与流畅的交互流程，提升用户转化率 40%。</p>
                         </div>
-                        <div class="flex items-center gap-2 text-blue-600 font-medium group-hover:gap-4 transition-all cursor-pointer">
+                        <div class="flex items-center gap-2 text-cyan-400 font-medium group-hover:gap-4 transition-all cursor-pointer">
                             查看详情 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                         </div>
                     </div>
                 </div>
 
-                <!-- 中等卡片 1 -->
-                <div class="md:col-span-1 md:row-span-2 glass-effect rounded-3xl overflow-hidden card-hover group relative scroll-reveal">
-                    <div class="absolute inset-0 bg-gradient-to-b from-emerald-50 to-teal-50 opacity-50"></div>
+                <!-- 中等卡片 -->
+                <div class="md:col-span-1 md:row-span-2 card-dark rounded-3xl overflow-hidden group relative scroll-reveal">
+                    <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-purple-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div class="relative h-full p-6 flex flex-col justify-between">
-                        <div class="w-full h-32 bg-gradient-to-br from-emerald-200 to-teal-200 rounded-2xl mb-4 flex items-center justify-center text-4xl">
-                            📱
+                        <div class="w-full h-32 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 rounded-2xl mb-4 flex items-center justify-center">
+                            <svg class="w-12 h-12 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-slate-800 mb-1">移动应用界面</h3>
-                            <p class="text-slate-600 text-xs">健康管理 App UI 设计</p>
+                            <h3 class="text-lg font-bold text-gray-100 mb-1">移动应用界面</h3>
+                            <p class="text-gray-500 text-xs font-mono">健康管理 App UI</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 小卡片 1 -->
-                <div class="glass-effect rounded-3xl overflow-hidden card-hover group relative scroll-reveal bg-gradient-to-br from-blue-400 to-blue-500">
-                    <div class="h-full p-6 flex flex-col justify-center items-center text-white text-center">
-                        <div class="text-3xl mb-2">🌿</div>
-                        <h3 class="font-bold text-sm">品牌设计</h3>
+                <!-- 小卡片 -->
+                <div class="card-dark rounded-3xl overflow-hidden group relative scroll-reveal border-cyan-500/20">
+                    <div class="h-full p-6 flex flex-col justify-center items-center text-center">
+                        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-3 group-hover:shadow-[0_0_20px_rgba(0,240,255,0.15)] transition-shadow">
+                            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+                        </div>
+                        <h3 class="font-bold text-gray-100 text-sm">品牌设计</h3>
                     </div>
                 </div>
 
-                <!-- 小卡片 2 -->
-                <div class="glass-effect rounded-3xl overflow-hidden card-hover group relative scroll-reveal bg-gradient-to-br from-emerald-400 to-teal-500">
-                    <div class="h-full p-6 flex flex-col justify-center items-center text-white text-center">
-                        <div class="text-3xl mb-2">✨</div>
-                        <h3 class="font-bold text-sm">动效设计</h3>
+                <div class="card-dark rounded-3xl overflow-hidden group relative scroll-reveal border-purple-500/20">
+                    <div class="h-full p-6 flex flex-col justify-center items-center text-center">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-3 group-hover:shadow-[0_0_20px_rgba(123,97,255,0.15)] transition-shadow">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <h3 class="font-bold text-gray-100 text-sm">动效设计</h3>
                     </div>
                 </div>
 
                 <!-- 宽卡片 -->
-                <div class="md:col-span-2 glass-effect rounded-3xl overflow-hidden card-hover group relative scroll-reveal">
-                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-50 to-blue-50 opacity-50"></div>
+                <div class="md:col-span-2 card-dark rounded-3xl overflow-hidden group relative scroll-reveal">
+                    <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div class="relative h-full p-6 flex items-center gap-6">
-                        <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-200 to-blue-200 flex-shrink-0 flex items-center justify-center text-3xl">
-                            🎯
+                        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 flex-shrink-0 flex items-center justify-center border border-cyan-500/10">
+                            <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-slate-800 mb-2">数据可视化仪表盘</h3>
-                            <p class="text-slate-600 text-sm">企业级数据分析平台，简洁直观的信息架构设计。</p>
+                            <h3 class="text-xl font-bold text-gray-100 mb-2">数据可视化仪表盘</h3>
+                            <p class="text-gray-400 text-sm">企业级数据分析平台，简洁直观的信息架构设计。</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- 底部卡片 -->
-                <div class="md:col-span-1 glass-effect rounded-3xl overflow-hidden card-hover group relative scroll-reveal">
+                <div class="card-dark rounded-3xl overflow-hidden group relative scroll-reveal">
                     <div class="h-full p-6 flex flex-col justify-center items-center text-center">
-                        <div class="text-4xl mb-2 group-hover:rotate-12 transition-transform">🚀</div>
-                        <h3 class="font-bold text-slate-800 text-sm">更多项目</h3>
+                        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-3 group-hover:rotate-12 transition-transform">
+                            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        </div>
+                        <h3 class="font-bold text-gray-100 text-sm">更多项目</h3>
                     </div>
                 </div>
             </div>
@@ -437,36 +593,33 @@
     <!-- Contact Section -->
     <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8">
         <div class="max-w-4xl mx-auto">
-            <div class="glass-effect rounded-[2rem] p-8 md:p-12 shadow-2xl border border-white/50 scroll-reveal">
+            <div class="card-dark rounded-[2rem] p-8 md:p-12 border-cyan-500/15 scroll-reveal">
                 <div class="text-center mb-10">
-                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">开始对话</h2>
-                    <p class="text-slate-600">有项目想要讨论？或者只是想打个招呼？随时与我联系。</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-100 mb-4 tracking-wider">开始对话</h2>
+                    <p class="text-gray-500">有项目想要讨论？或者只是想打个招呼？随时与我联系。</p>
                 </div>
 
                 <form id="contactForm" class="space-y-6" onsubmit="handleSubmit(event)">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="relative">
-                            <input type="text" id="name" required class="peer w-full px-4 py-4 rounded-xl border border-slate-200 bg-white/50 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all placeholder-transparent" placeholder="姓名">
-                            <label for="name" class="absolute left-4 -top-2.5 bg-white px-2 text-xs font-medium text-slate-500 peer-focus:text-blue-500 transition-all">姓名</label>
+                            <input type="text" id="name" required class="w-full px-4 py-4 rounded-xl input-dark" placeholder="姓名">
                         </div>
                         <div class="relative">
-                            <input type="email" id="email" required class="peer w-full px-4 py-4 rounded-xl border border-slate-200 bg-white/50 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all placeholder-transparent" placeholder="邮箱">
-                            <label for="email" class="absolute left-4 -top-2.5 bg-white px-2 text-xs font-medium text-slate-500 peer-focus:text-blue-500 transition-all">邮箱</label>
+                            <input type="email" id="email" required class="w-full px-4 py-4 rounded-xl input-dark" placeholder="邮箱">
                         </div>
                     </div>
                     
                     <div class="relative">
-                        <textarea id="message" rows="4" required class="peer w-full px-4 py-4 rounded-xl border border-slate-200 bg-white/50 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all placeholder-transparent resize-none" placeholder="留言"></textarea>
-                        <label for="message" class="absolute left-4 -top-2.5 bg-white px-2 text-xs font-medium text-slate-500 peer-focus:text-blue-500 transition-all">留言内容</label>
+                        <textarea id="message" rows="4" required class="w-full px-4 py-4 rounded-xl input-dark resize-none" placeholder="留言内容"></textarea>
                     </div>
 
-                    <button type="submit" id="submitBtn" class="w-full py-4 bg-gradient-to-r from-blue-400 to-emerald-400 text-white rounded-xl font-semibold shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 group">
+                    <button type="submit" id="submitBtn" class="w-full py-4 btn-glow text-white rounded-xl font-semibold flex items-center justify-center gap-2 group">
                         <span>发送消息</span>
                         <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                     </button>
                 </form>
 
-                <div id="successMessage" class="hidden mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-center">
+                <div id="successMessage" class="hidden mt-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-center">
                     感谢您的留言！我会尽快回复您。
                 </div>
             </div>
@@ -474,24 +627,24 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-100 py-12 px-4 sm:px-6 lg:px-8">
+    <footer class="border-t border-gray-800/50 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-emerald-400 flex items-center justify-center text-white font-bold text-sm">
-                    P
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
+                    M
                 </div>
-                <span class="font-bold text-slate-700">Portfolio</span>
+                <span class="font-bold text-gray-300 tracking-wide">MoyuChen</span>
             </div>
             
-            <div class="flex gap-8 text-sm text-slate-500">
-                <a href="#" class="hover:text-blue-500 transition-colors">首页</a>
-                <a href="#" class="hover:text-blue-500 transition-colors">关于</a>
-                <a href="#" class="hover:text-blue-500 transition-colors">作品</a>
-                <a href="#" class="hover:text-blue-500 transition-colors">联系</a>
+            <div class="flex gap-8 text-sm text-gray-500 font-mono">
+                <a href="#home" class="hover:text-cyan-400 transition-colors">HOME</a>
+                <a href="#about" class="hover:text-cyan-400 transition-colors">ABOUT</a>
+                <a href="#projects" class="hover:text-cyan-400 transition-colors">WORKS</a>
+                <a href="#contact" class="hover:text-cyan-400 transition-colors">CONTACT</a>
             </div>
 
-            <div class="text-sm text-slate-400">
-                © 2024 Personal Portfolio. All rights reserved.
+            <div class="text-sm text-gray-600 font-mono">
+                &copy; 2026 MoyuChen. All systems nominal.
             </div>
         </div>
     </footer>
@@ -509,23 +662,23 @@
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) {
-                navbar.classList.add('shadow-sm');
+                navbar.style.borderBottomColor = 'rgba(0,240,255,0.2)';
+                navbar.style.boxShadow = '0 0 20px rgba(0,240,255,0.05)';
             } else {
-                navbar.classList.remove('shadow-sm');
+                navbar.style.borderBottomColor = 'rgba(0,240,255,0.1)';
+                navbar.style.boxShadow = 'none';
             }
         });
 
-        // 平滑滚动到指定区域
+        // 平滑滚动
         function scrollToSection(id) {
             const element = document.getElementById(id);
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth' });
-                // 关闭移动端菜单
                 mobileMenu.classList.add('hidden');
             }
         }
 
-        // 所有锚点链接添加平滑滚动
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -544,60 +697,38 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
-                    
-                    // 如果是技能区域，触发动画条
-                    if (entry.target.querySelector('.skill-bar')) {
-                        const bars = entry.target.querySelectorAll('.skill-bar');
-                        bars.forEach(bar => {
-                            const width = bar.style.width;
-                            bar.style.width = '0';
-                            setTimeout(() => {
-                                bar.style.width = width;
-                            }, 100);
-                        });
-                    }
                 }
             });
         }, observerOptions);
 
         document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
 
-        // 表单提交处理
+        // 表单提交
         function handleSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const originalContent = btn.innerHTML;
             
-            // 显示加载状态
             btn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
             btn.disabled = true;
             
-            // 模拟提交延迟
             setTimeout(() => {
                 document.getElementById('successMessage').classList.remove('hidden');
                 document.getElementById('contactForm').reset();
                 btn.innerHTML = originalContent;
                 btn.disabled = false;
                 
-                // 3秒后隐藏成功消息
                 setTimeout(() => {
                     document.getElementById('successMessage').classList.add('hidden');
                 }, 3000);
             }, 1500);
         }
 
-        // 添加鼠标跟随效果（可选的交互增强）
+        // 鼠标跟随光点
+        const cursorGlow = document.getElementById('cursorGlow');
         document.addEventListener('mousemove', (e) => {
-            const blobs = document.querySelectorAll('.blob');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            blobs.forEach((blob, index) => {
-                const speed = (index + 1) * 20;
-                const xOffset = (window.innerWidth / 2 - e.clientX) / speed;
-                const yOffset = (window.innerHeight / 2 - e.clientY) / speed;
-                blob.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-            });
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
         });
     </script>
 </body>
