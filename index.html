@@ -1,561 +1,715 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>魔芋陈</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>华夏通关 - 中国省市成就系统</title>
     <style>
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
+        /* ===== 全局重置 & 暗色主题 ===== */
+        * {
             box-sizing: border-box;
         }
-
-        :root {
-            --bg: #faf9f7;
-            --text: #1a1a1a;
-            --text-muted: #777777;
-            --border: #d0ccc4;
-            --hover: #f0ede8;
-            font-size: 17px;
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #141414;
-                --text: #e8e4de;
-                --text-muted: #888888;
-                --border: #2e2a26;
-                --hover: #1e1c19;
+        /* ===== 标题区 ===== */
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 2px;
+            font-size: 2.6em;
+            text-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
+            letter-spacing: 4px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 2px;
+            font-size: 1.3em;
+            font-weight: normal;
+            letter-spacing: 2px;
+        }
+        .disclaimer {
+            text-align: center;
+            color: #666;
+            margin-bottom: 6px;
+            font-size: 0.85em;
+        }
+        .disclaimer.highlight {
+            color: #888;
+            font-size: 0.8em;
+        }
+        .overall-stats {
+            text-align: center;
+            color: #ffd54f;
+            margin-bottom: 30px;
+            font-size: 1.3em;
+            font-weight: bold;
+            letter-spacing: 1px;
+            background: #2a2a2a;
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
+            width: auto;
+            border: 1px solid #444;
+        }
+        .stats-wrapper {
+            text-align: center;
+        }
+
+        /* ===== 系列容器 ===== */
+        .series-container {
+            margin-bottom: 24px;
+        }
+
+        /* ===== 系列标题（可折叠） ===== */
+        .series-header {
+            background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+            padding: 14px 22px;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #555;
+            border-bottom: none;
+            transition: background 0.25s;
+            user-select: none;
+        }
+        .series-header:hover {
+            background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
+        }
+        .series-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #ffd54f;
+            letter-spacing: 1px;
+        }
+        .series-stats {
+            font-size: 1.1em;
+            color: #bbb;
+            background: #3a3a3a;
+            padding: 4px 16px;
+            border-radius: 20px;
+            border: 1px solid #555;
+        }
+
+        /* ===== 系列内容（成就网格） ===== */
+        .series-content {
+            padding: 18px;
+            background: #252525;
+            border-radius: 0 0 10px 10px;
+            border: 1px solid #555;
+            border-top: none;
+            display: block;
+        }
+        .series-content.collapsed {
+            display: none;
+        }
+
+        /* ===== 成就网格 ===== */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
+        }
+
+        /* ===== 成就卡片 ===== */
+        .achievement-card {
+            background: linear-gradient(145deg, #2c2c2c, #1f1f1f);
+            border-radius: 12px;
+            padding: 16px 16px 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border: 1px solid #3a3a3a;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
+            cursor: pointer;
+            gap: 14px;
+        }
+        .achievement-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(255, 193, 7, 0.25);
+            background: linear-gradient(145deg, #333, #242424);
+        }
+        /* 已解锁状态 */
+        .achievement-card.unlocked {
+            border: 2px solid #ffd54f;
+            box-shadow: 0 0 18px rgba(255, 193, 7, 0.25);
+        }
+        /* 未解锁状态（半透明） */
+        .achievement-card.locked {
+            opacity: 0.55;
+        }
+        .achievement-card.locked .achievement-title {
+            color: #999;
+        }
+
+        /* ===== 图标 ===== */
+        .achievement-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid #444;
+            flex-shrink: 0;
+            background: #1a1a1a;
+        }
+        .achievement-card.unlocked .achievement-icon {
+            border-color: #ffd54f;
+        }
+
+        /* ===== 文字内容 ===== */
+        .achievement-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .achievement-title {
+            font-weight: bold;
+            font-size: 1.15em;
+            color: #ffd54f;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        .achievement-description {
+            font-size: 0.88em;
+            color: #bbb;
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+        .achievement-statistics {
+            font-size: 0.75em;
+            color: #777;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 640px) {
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .subtitle {
+                font-size: 1.0em;
+            }
+            .series-title {
+                font-size: 1.1em;
+            }
+            .series-header {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .achievement-card {
+                padding: 14px;
+            }
+            .achievement-icon {
+                width: 48px;
+                height: 48px;
+            }
+        }
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .achievements-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1025px) and (max-width: 1600px) {
+            .achievements-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (min-width: 1601px) {
+            .achievements-grid {
+                grid-template-columns: repeat(4, 1fr);
             }
         }
 
-        html {
-            scroll-behavior: smooth;
+        /* ===== 页脚 ===== */
+        .footer {
+            text-align: center;
+            color: #555;
+            margin-top: 40px;
+            font-size: 0.8em;
+            border-top: 1px solid #333;
+            padding-top: 20px;
         }
-
-        body {
-            font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            font-weight: 300;
-            -webkit-font-smoothing: antialiased;
-            line-height: 2;
-        }
-
-        h1, h2, h3 {
-            font-family: 'Noto Serif SC', 'PingFang SC', serif;
-        }
-
-        a {
-            color: inherit;
+        .footer a {
+            color: #777;
             text-decoration: none;
         }
-
-        /* ── nav ── */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
-            font-family: 'Noto Serif SC', serif;
-        }
-
-        nav .inner {
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 0 32px;
-            height: 58px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        nav .logo {
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-        }
-
-        nav .links {
-            display: flex;
-            gap: 28px;
-        }
-
-        nav .links a {
-            font-size: 14px;
-            color: var(--text-muted);
-            transition: color 0.2s;
-            font-family: 'Noto Sans SC', sans-serif;
-            letter-spacing: 0.04em;
-        }
-
-        nav .links a:hover {
-            color: var(--text);
-        }
-
-        nav .menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-        }
-
-        nav .menu-btn svg {
-            width: 20px;
-            height: 20px;
-            stroke: var(--text);
-        }
-
-        /* ── main ── */
-        main {
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 0 32px;
-        }
-
-        /* ── hero ── */
-        .hero {
-            padding: 130px 0 72px;
-        }
-
-        .hero h1 {
-            font-size: clamp(30px, 5vw, 48px);
-            font-weight: 600;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            letter-spacing: 0.04em;
-        }
-
-        .hero h1 span {
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .hero p {
-            font-size: 16px;
-            color: var(--text-muted);
-            max-width: 560px;
-            margin-bottom: 28px;
-            line-height: 1.9;
-        }
-
-        .hero .meta {
-            font-size: 14px;
-            color: var(--text-muted);
-            display: flex;
-            gap: 24px;
-            flex-wrap: wrap;
-            letter-spacing: 0.02em;
-        }
-
-        .hero .meta span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* ── section ── */
-        section {
-            padding: 56px 0;
-            border-top: 1px solid var(--border);
-        }
-
-        section h2 {
-            font-size: 13px;
-            font-weight: 400;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 32px;
-            font-family: 'Noto Sans SC', sans-serif;
-        }
-
-        /* ── about ── */
-        .about-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-
-        .about-item {
-            padding: 20px 0;
-        }
-
-        .about-item h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            letter-spacing: 0.06em;
-        }
-
-        .about-item p {
-            font-size: 14px;
-            color: var(--text-muted);
-            line-height: 1.85;
-        }
-
-        /* ── skills ── */
-        .skill-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .skill-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            padding: 13px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 15px;
-        }
-
-        .skill-item:first-child {
-            border-top: 1px solid var(--border);
-        }
-
-        .skill-item .name {
-            letter-spacing: 0.02em;
-        }
-
-        .skill-item .desc {
-            color: var(--text-muted);
-            font-size: 13px;
-        }
-
-        /* ── projects ── */
-        .project-list {
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--border);
-        }
-
-        .project-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            transition: background 0.15s;
-        }
-
-        .project-item + .project-item {
-            border-top: 1px solid var(--border);
-        }
-
-        .project-item:hover {
-            background: var(--hover);
-        }
-
-        .project-item .info h3 {
-            font-size: 16px;
-            font-weight: 400;
-            margin-bottom: 3px;
-            letter-spacing: 0.03em;
-        }
-
-        .project-item .info p {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .project-item .arrow {
-            color: var(--text-muted);
-            font-size: 18px;
-            transition: transform 0.15s;
-        }
-
-        .project-item:hover .arrow {
-            transform: translateX(4px);
-        }
-
-        /* ── contact ── */
-        .contact-list {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-size: 15px;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .contact-item:first-child {
-            border-top: 1px solid var(--border);
-        }
-
-        .contact-item .label {
-            width: 52px;
-            font-size: 12px;
-            color: var(--text-muted);
-            letter-spacing: 0.08em;
-        }
-
-        .contact-item a {
-            transition: opacity 0.2s;
-        }
-
-        .contact-item a:hover {
-            opacity: 0.55;
-        }
-
-        /* ── footer ── */
-        footer {
-            padding: 52px 0;
-            border-top: 1px solid var(--border);
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        footer .inner {
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 0 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        footer .inner a {
-            transition: opacity 0.2s;
-        }
-
-        footer .inner a:hover {
-            opacity: 0.55;
-        }
-
-        /* ── mobile ── */
-        @media (max-width: 640px) {
-            nav .inner {
-                padding: 0 20px;
-            }
-
-            nav .links {
-                display: none;
-                position: absolute;
-                top: 58px;
-                left: 0;
-                right: 0;
-                background: var(--bg);
-                border-bottom: 1px solid var(--border);
-                flex-direction: column;
-                padding: 14px 20px;
-                gap: 14px;
-            }
-
-            nav .links.open {
-                display: flex;
-            }
-
-            nav .menu-btn {
-                display: block;
-            }
-
-            main {
-                padding: 0 20px;
-            }
-
-            .hero {
-                padding: 108px 0 48px;
-            }
-
-            .hero h1 {
-                font-size: 28px;
-            }
-
-            .hero p {
-                font-size: 15px;
-            }
-
-            .hero .meta {
-                gap: 14px;
-                font-size: 13px;
-            }
-
-            section {
-                padding: 40px 0;
-            }
-
-            .about-grid {
-                grid-template-columns: 1fr;
-                gap: 0;
-            }
-
-            .about-item {
-                padding: 18px 0;
-                border-bottom: 1px solid var(--border);
-            }
-
-            .about-item:last-child {
-                border-bottom: none;
-            }
-
-            section h2 {
-                margin-bottom: 20px;
-            }
-
-            .project-item {
-                padding: 14px 16px;
-            }
-
-            footer .inner {
-                padding: 0 20px;
-                flex-direction: column;
-                gap: 12px;
-                text-align: center;
-            }
+        .footer a:hover {
+            color: #ffd54f;
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="inner">
-            <a href="#" class="logo">魔芋陈</a>
-            <div class="links" id="navLinks">
-                <a href="#about">关于</a>
-                <a href="#skills">技能</a>
-                <a href="#projects">作品</a>
-                <a href="#contact">联系</a>
-            </div>
-            <button class="menu-btn" id="menuBtn" aria-label="菜单">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>
-                </svg>
-            </button>
+<div class="container">
+
+    <!-- ===== 标题 ===== -->
+    <h1>🗺️ 华夏通关</h1>
+    <div class="subtitle">China Provincial Achievements</div>
+    <div class="disclaimer">本页面使用 AI 生成，仅供娱乐</div>
+    <div class="disclaimer highlight">单击成就可切换完成/关闭状态 · 单击系列标题可折叠/展开</div>
+
+    <div class="stats-wrapper">
+        <div class="overall-stats" id="overall-stats">总体进度：0 / 0</div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 系列1：硬核地理与生存挑战                                      -->
+    <!-- ============================================================ -->
+    <div class="series-container">
+        <div class="series-header" onclick="toggleSeries('geo')">
+            <span class="series-title">🏔️ 硬核地理 · 生存挑战</span>
+            <span class="series-stats" id="geo-stats">0/5</span>
         </div>
-    </nav>
+        <div class="series-content" id="geo-content">
+            <div class="achievements-grid">
 
-    <main>
-        <section class="hero" id="home">
-            <h1>魔芋陈<br><span>记录学习与实践</span></h1>
-            <p>计算机科学硕士，信息安全方向。热爱简洁优雅的工程化落地，专注于第一性原理以极简方式完成项目。</p>
-            <div class="meta">
-                <span>上海</span>
-                <span>计算机科学与技术</span>
-                <span>ayadododo@outlook.com</span>
-            </div>
-        </section>
-
-        <section id="about">
-            <h2>关于</h2>
-            <div class="about-grid">
-                <div class="about-item">
-                    <h3>学习</h3>
-                    <p>本科计算机网络，研究生算法与深度学习。持续探索前沿技术，相信学习是一生的旅程。</p>
-                </div>
-                <div class="about-item">
-                    <h3>实践</h3>
-                    <p>Vue3、微信小程序、LangChain、SpringBoot、MySQL。注重知识细节与工程落地，追求极致的解决方案。</p>
-                </div>
-                <div class="about-item">
-                    <h3>协作</h3>
-                    <p>重视团队沟通与协作，相信有效的协作能激发更大潜力，提高工作效率。</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="skills">
-            <h2>技能</h2>
-            <div class="skill-list">
-                <div class="skill-item">
-                    <span class="name">前端开发</span>
-                    <span class="desc">Vue3 · 微信小程序</span>
-                </div>
-                <div class="skill-item">
-                    <span class="name">后端服务</span>
-                    <span class="desc">SpringBoot · Java</span>
-                </div>
-                <div class="skill-item">
-                    <span class="name">数据库</span>
-                    <span class="desc">MySQL 设计与管理</span>
-                </div>
-                <div class="skill-item">
-                    <span class="name">AI 应用</span>
-                    <span class="desc">LangChain · Ollama</span>
-                </div>
-                <div class="skill-item">
-                    <span class="name">算法研究</span>
-                    <span class="desc">Python · Matlab · 深度学习</span>
-                </div>
-            </div>
-        </section>
-
-        <section id="projects">
-            <h2>作品</h2>
-            <div class="project-list">
-                <div class="project-item">
-                    <div class="info">
-                        <h3>工业知识库 RAG 问答系统</h3>
-                        <p>LangChain · Ollama · SpringBoot · Vue3</p>
+                <div class="achievement-card locked" data-series="geo">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232d5a27'/%3E%3Cpath d='M50 10 L90 35 L80 85 L20 85 L10 35 Z' fill='%23a0522d' stroke='%23ffd700' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%23ffd700'/%3E%3C/svg%3E" alt="制霸中华" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">制霸中华</div>
+                        <div class="achievement-description">成功标记并访问过中国所有 34 个省级行政区</div>
+                        <div class="achievement-statistics">0.001% 的人拥有此成就</div>
                     </div>
-                    <span class="arrow">→</span>
                 </div>
-                <div class="project-item">
-                    <div class="info">
-                        <h3>公司产品型号管理系统</h3>
-                        <p>Vue3 · SpringBoot · MySQL</p>
-                    </div>
-                    <span class="arrow">→</span>
-                </div>
-                <div class="project-item">
-                    <div class="info">
-                        <h3>选型系统</h3>
-                        <p>Vue3 · SpringBoot · MySQL</p>
-                    </div>
-                    <span class="arrow">→</span>
-                </div>
-                <div class="project-item">
-                    <div class="info">
-                        <h3>个人主页</h3>
-                        <p>Ayadododo.github.io</p>
-                    </div>
-                    <span class="arrow">→</span>
-                </div>
-            </div>
-        </section>
 
-        <section id="contact">
-            <h2>联系</h2>
-            <div class="contact-list">
-                <div class="contact-item">
-                    <span class="label">邮箱</span>
-                    <a href="mailto:ayadododo@outlook.com">ayadododo@outlook.com</a>
+                <div class="achievement-card locked" data-series="geo">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233b5e3b'/%3E%3Cpath d='M20 80 L80 80 L70 30 L30 30 Z' fill='%236b8e6b' stroke='%23fff' stroke-width='1.5'/%3E%3Cpath d='M40 50 L60 50 L55 35 L45 35 Z' fill='%23ffd700'/%3E%3C/svg%3E" alt="蜀道难" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">蜀道难</div>
+                        <div class="achievement-description">在四川境内，成功自驾通过一段著名的盘山公路或险峻山路</div>
+                        <div class="achievement-statistics">0.02% 的人拥有此成就</div>
+                    </div>
                 </div>
-                <div class="contact-item">
-                    <span class="label">GitHub</span>
-                    <a href="https://github.com/Ayadododo" target="_blank" rel="noopener">github.com/Ayadododo</a>
-                </div>
-            </div>
-        </section>
-    </main>
 
-    <footer>
-        <div class="inner">
-            <span>© 2026 魔芋陈</span>
-            <span>朴素简洁</span>
+                <div class="achievement-card locked" data-series="geo">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233b6b9e'/%3E%3Ccircle cx='50' cy='50' r='35' fill='%23b0d4f1' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='5' fill='%23fff'/%3E%3C/svg%3E" alt="冰雪奇缘" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">冰雪奇缘</div>
+                        <div class="achievement-description">在冬季（12–2月）造访黑龙江漠河，并在室外成功泼水成冰</div>
+                        <div class="achievement-statistics">0.01% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="geo">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23c2a366'/%3E%3Cpath d='M20 70 L50 30 L80 70 Z' fill='%23e8c88a' stroke='%238b6b3d' stroke-width='2'/%3E%3Ccircle cx='35' cy='65' r='6' fill='%238b6b3d'/%3E%3Ccircle cx='65' cy='65' r='6' fill='%238b6b3d'/%3E%3C/svg%3E" alt="沙漠之舟" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">沙漠之舟</div>
+                        <div class="achievement-description">在新疆或内蒙古的沙漠地带，完成一次超过 5 公里的骆驼骑行</div>
+                        <div class="achievement-statistics">0.008% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="geo">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233d5a3d'/%3E%3Ccircle cx='50' cy='50' r='30' fill='%23ffd700' stroke='%23fff' stroke-width='2'/%3E%3Ctext x='50' y='58' font-size='32' text-anchor='middle' fill='%233d5a3d' font-weight='bold'%3E藏%3C/text%3E%3C/svg%3E" alt="日光之城" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">日光之城朝圣者</div>
+                        <div class="achievement-description">在拉萨大昭寺前，跟随人群完成一次完整的转经</div>
+                        <div class="achievement-statistics">0.005% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </footer>
+    </div>
 
-    <script>
-        const menuBtn = document.getElementById('menuBtn');
-        const navLinks = document.getElementById('navLinks');
-        menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
-        navLinks.querySelectorAll('a').forEach(a => {
-            a.addEventListener('click', () => navLinks.classList.remove('open'));
-        });
-    </script>
+    <!-- ============================================================ -->
+    <!-- 系列2：美食与文化试炼                                          -->
+    <!-- ============================================================ -->
+    <div class="series-container">
+        <div class="series-header" onclick="toggleSeries('food')">
+            <span class="series-title">🌶️ 美食 · 文化试炼</span>
+            <span class="series-stats" id="food-stats">0/6</span>
+        </div>
+        <div class="series-content" id="food-content">
+            <div class="achievements-grid">
+
+                <div class="achievement-card locked" data-series="food">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%238b0000'/%3E%3Ccircle cx='50' cy='50' r='30' fill='%23ff4444'/%3E%3Ctext x='50' y='58' font-size='36' text-anchor='middle' fill='%23fff' font-weight='bold'%3E辣%3C/text%3E%3C/svg%3E" alt="辣椒王者" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">🌶️ 辣椒王者</div>
+                        <div class="achievement-description">在湖南或江西的餐馆，吃完一份标注为「本地辣」或「变态辣」的菜肴</div>
+                        <div class="achievement-statistics">0.15% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="food">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%234a7a4a'/%3E%3Cpath d='M30 70 L70 70 L60 30 L40 30 Z' fill='%23a8d08a' stroke='%23fff' stroke-width='1.5'/%3E%3C/svg%3E" alt="折耳根鉴赏家" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">折耳根鉴赏家</div>
+                        <div class="achievement-description">在贵州或云南，吃完一整盘凉拌折耳根（鱼腥草）并面不改色</div>
+                        <div class="achievement-statistics">0.08% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="food">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23b8860b'/%3E%3Ccircle cx='50' cy='50' r='28' fill='%23f0c060' stroke='%23fff' stroke-width='2'/%3E%3Ctext x='50' y='58' font-size='28' text-anchor='middle' fill='%238b4513'%3E早%3C/text%3E%3C/svg%3E" alt="早茶达人" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">早茶达人</div>
+                        <div class="achievement-description">在广东，连续三天早上 7 点前起床喝早茶，并尝试不少于 10 种点心</div>
+                        <div class="achievement-statistics">0.12% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="food">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%238b4513'/%3E%3Ccircle cx='50' cy='50' r='30' fill='%23d2691e' stroke='%23ffd700' stroke-width='2'/%3E%3Ctext x='50' y='58' font-size='26' text-anchor='middle' fill='%23fff'%3E串%3C/text%3E%3C/svg%3E" alt="羊肉串大师" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">羊肉串大师</div>
+                        <div class="achievement-description">在新疆，亲自烤制并吃完 10 串红柳大串</div>
+                        <div class="achievement-statistics">0.06% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="food">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23b22222'/%3E%3Ctext x='50' y='65' font-size='44' text-anchor='middle' fill='%23fff' font-weight='bold'%3E面%3C/text%3E%3C/svg%3E" alt="小面之神" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">小面之神</div>
+                        <div class="achievement-description">在重庆，一周内连续七天早餐吃不同店家的小面</div>
+                        <div class="achievement-statistics">0.04% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="food">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23b8860b'/%3E%3Ccircle cx='50' cy='50' r='30' fill='%23f4a460' stroke='%23fff' stroke-width='2'/%3E%3Ctext x='50' y='58' font-size='28' text-anchor='middle' fill='%238b4513'%3E馍%3C/text%3E%3C/svg%3E" alt="馍法学徒" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">馍法学徒</div>
+                        <div class="achievement-description">在陕西，亲自体验手工掰馍，并完成一碗正宗的羊肉泡馍</div>
+                        <div class="achievement-statistics">0.03% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 系列3：方言 · 民俗 · 整活                                     -->
+    <!-- ============================================================ -->
+    <div class="series-container">
+        <div class="series-header" onclick="toggleSeries('culture')">
+            <span class="series-title">🗣️ 方言 · 民俗 · 整活</span>
+            <span class="series-stats" id="culture-stats">0/5</span>
+        </div>
+        <div class="series-content" id="culture-content">
+            <div class="achievements-grid">
+
+                <div class="achievement-card locked" data-series="culture">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232a4a6a'/%3E%3Ccircle cx='50' cy='45' r='25' fill='%234a7aaa'/%3E%3Cpath d='M30 70 L70 70 L60 85 L40 85 Z' fill='%23ffd700'/%3E%3C/svg%3E" alt="方言十级" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">方言十级学者</div>
+                        <div class="achievement-description">在任意省份，学会并用当地方言完成一次点餐或砍价</div>
+                        <div class="achievement-statistics">0.20% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="culture">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232a6a3a'/%3E%3Crect x='30' y='40' width='40' height='30' fill='%23f4c430'/%3E%3Crect x='35' y='50' width='30' height='10' fill='%23333'/%3E%3Ccircle cx='40' cy='65' r='6' fill='%23333'/%3E%3Ccircle cx='60' cy='65' r='6' fill='%23333'/%3E%3C/svg%3E" alt="蓝翔校友" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「蓝翔」荣誉校友</div>
+                        <div class="achievement-description">在山东，与一辆挖掘机合影，并摆出「技术哪家强」的经典姿势</div>
+                        <div class="achievement-statistics">0.18% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="culture">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%238b0000'/%3E%3Ctext x='50' y='65' font-size='44' text-anchor='middle' fill='%23fff' font-weight='bold'%3E酱%3C/text%3E%3C/svg%3E" alt="老干妈品鉴官" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「老干妈」品鉴官</div>
+                        <div class="achievement-description">在贵州，尝试三种以上不同口味的老干妈，并能准确说出其区别</div>
+                        <div class="achievement-statistics">0.10% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="culture">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233a5a8a'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ff6b6b'/%3E%3Crect x='30' y='60' width='40' height='15' fill='%23fff'/%3E%3C/svg%3E" alt="老铁双击" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「老铁」双击 666</div>
+                        <div class="achievement-description">在东北，与三位以上陌生人进行「你瞅啥？」「瞅你咋地！」经典对话并全身而退</div>
+                        <div class="achievement-statistics">0.07% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="culture">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233d5a3d'/%3E%3Cpath d='M20 80 L50 30 L80 80 Z' fill='%23a0522d' stroke='%23ffd700' stroke-width='2'/%3E%3Ctext x='50' y='75' font-size='22' text-anchor='middle' fill='%23ffd700'%3E草原%3C/text%3E%3C/svg%3E" alt="草原巴特尔" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">草原巴特尔</div>
+                        <div class="achievement-description">在内蒙古，学会一句蒙古语「你好」（Сайн уу?），并向当地人成功问候</div>
+                        <div class="achievement-statistics">0.03% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 系列4：城市 · 地域「刻板印象」                                 -->
+    <!-- ============================================================ -->
+    <div class="series-container">
+        <div class="series-header" onclick="toggleSeries('city')">
+            <span class="series-title">🏙️ 城市 · 地域印象</span>
+            <span class="series-stats" id="city-stats">0/5</span>
+        </div>
+        <div class="series-content" id="city-content">
+            <div class="achievements-grid">
+
+                <div class="achievement-card locked" data-series="city">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232a4a7a'/%3E%3Crect x='20' y='30' width='60' height='50' fill='%234a7aaa' stroke='%23fff' stroke-width='1.5'/%3E%3Crect x='35' y='45' width='30' height='35' fill='%236a9aca'/%3E%3C/svg%3E" alt="包邮区贵族" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">包邮区贵族</div>
+                        <div class="achievement-description">在江浙沪地区，体验一次「当日达」或「次日达」的网购服务</div>
+                        <div class="achievement-statistics">0.35% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="city">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%238b0000'/%3E%3Crect x='25' y='20' width='50' height='50' fill='%23ffd700'/%3E%3Ccircle cx='50' cy='45' r='10' fill='%238b0000'/%3E%3C/svg%3E" alt="帝都漫步者" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「帝都」漫步者</div>
+                        <div class="achievement-description">在北京，一天之内逛完故宫、天坛、颐和园，并在朋友圈集齐九宫格</div>
+                        <div class="achievement-statistics">0.25% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="city">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232a2a3a'/%3E%3Ccircle cx='50' cy='40' r='25' fill='%23ffd700'/%3E%3Crect x='30' y='65' width='40' height='15' fill='%234a4a5a'/%3E%3C/svg%3E" alt="魔都精致人" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「魔都」精致人</div>
+                        <div class="achievement-description">在上海，打卡三家以上网红咖啡馆或 Brunch 店</div>
+                        <div class="achievement-statistics">0.20% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="city">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233a5a3a'/%3E%3Cpath d='M50 15 L85 45 L70 85 L30 85 L15 45 Z' fill='%236a8a5a' stroke='%23ffd700' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='12' fill='%23ffd700'/%3E%3C/svg%3E" alt="风花雪月" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「风花雪月」体验官</div>
+                        <div class="achievement-description">在云南大理，完成「下关风，上关花，苍山雪，洱海月」全部体验</div>
+                        <div class="achievement-statistics">0.06% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="city">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233a5a7a'/%3E%3Ccircle cx='50' cy='50' r='30' fill='%234a7a9a' stroke='%23fff' stroke-width='2'/%3E%3Ctext x='50' y='58' font-size='28' text-anchor='middle' fill='%23fff'%3E港%3C/text%3E%3C/svg%3E" alt="东方之珠" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「东方之珠」掠影</div>
+                        <div class="achievement-description">在香港，乘坐天星小轮横渡维多利亚港，并拍摄夜景</div>
+                        <div class="achievement-statistics">0.04% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 系列5：历史 · 玩梗 · 彩蛋                                     -->
+    <!-- ============================================================ -->
+    <div class="series-container">
+        <div class="series-header" onclick="toggleSeries('history')">
+            <span class="series-title">🎭 历史 · 玩梗 · 彩蛋</span>
+            <span class="series-stats" id="history-stats">0/5</span>
+        </div>
+        <div class="series-content" id="history-content">
+            <div class="achievements-grid">
+
+                <div class="achievement-card locked" data-series="history">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232a3a4a'/%3E%3Ccircle cx='50' cy='40' r='25' fill='%23ffd700'/%3E%3Crect x='35' y='65' width='30' height='15' fill='%23c0c0c0'/%3E%3C/svg%3E" alt="梦回唐朝" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「梦回唐朝」</div>
+                        <div class="achievement-description">在陕西西安，穿着汉服完成一次大唐不夜城的夜游</div>
+                        <div class="achievement-statistics">0.15% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="history">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233a4a3a'/%3E%3Crect x='25' y='30' width='50' height='40' fill='%238b6b3d' stroke='%23ffd700' stroke-width='2'/%3E%3Ctext x='50' y='58' font-size='24' text-anchor='middle' fill='%23ffd700'%3E皮%3C/text%3E%3C/svg%3E" alt="江南皮革厂" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「江南皮革厂」考察员</div>
+                        <div class="achievement-description">在浙江温州，找到并拍摄一张「江南皮革厂」的招牌（或旧址）</div>
+                        <div class="achievement-statistics">0.08% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="history">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%238b4513'/%3E%3Crect x='30' y='40' width='40' height='30' fill='%23d2a679' stroke='%23fff' stroke-width='1.5'/%3E%3Ctext x='50' y='62' font-size='22' text-anchor='middle' fill='%238b4513'%3E切糕%3C/text%3E%3C/svg%3E" alt="切糕鉴赏家" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「切糕」鉴赏家</div>
+                        <div class="achievement-description">在新疆，购买并品尝一块正宗的玛仁糖（切糕），并成功守护钱包的完整</div>
+                        <div class="achievement-statistics">0.05% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="history">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232a4a6a'/%3E%3Ccircle cx='50' cy='50' r='30' fill='%23ff6b6b' stroke='%23fff' stroke-width='2'/%3E%3Ctext x='50' y='58' font-size='26' text-anchor='middle' fill='%23fff'%3E花%3C/text%3E%3C/svg%3E" alt="牡丹花都" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「牡丹花都」访客</div>
+                        <div class="achievement-description">在河南洛阳，四月牡丹花会期间，与九大色系的牡丹合影</div>
+                        <div class="achievement-statistics">0.04% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked" data-series="history">
+                    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233a5a3a'/%3E%3Ccircle cx='50' cy='50' r='28' fill='%234a8a5a' stroke='%23ffd700' stroke-width='2'/%3E%3Ctext x='50' y='58' font-size='24' text-anchor='middle' fill='%23ffd700'%3E凉都%3C/text%3E%3C/svg%3E" alt="凉都避暑客" class="achievement-icon" />
+                    <div class="achievement-content">
+                        <div class="achievement-title">「凉都」避暑客</div>
+                        <div class="achievement-description">在贵州六盘水，夏季（7–8月）在此地住宿超过 3 晚且未使用空调</div>
+                        <div class="achievement-statistics">0.02% 的人拥有此成就</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        🎮 华夏通关 · 中国省市成就系统 · 单击成就切换状态 · 仅供娱乐<br />
+        灵感来自 <a href="https://vzwyu.github.io/Global-Passport/" target="_blank">Global Passport Achievements</a>
+    </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- JavaScript                                                    -->
+<!-- ============================================================ -->
+<script>
+    (function() {
+        'use strict';
+
+        // ---------- 工具：更新系列统计 ----------
+        function updateSeriesStats(seriesId) {
+            const cards = document.querySelectorAll(
+                '.achievement-card[data-series="' + seriesId + '"]'
+            );
+            let total = cards.length;
+            let unlocked = 0;
+            cards.forEach(function(card) {
+                if (card.classList.contains('unlocked')) {
+                    unlocked++;
+                }
+            });
+            const statsEl = document.getElementById(seriesId + '-stats');
+            if (statsEl) {
+                statsEl.textContent = unlocked + '/' + total;
+            }
+            return { total: total, unlocked: unlocked };
+        }
+
+        // ---------- 更新总体进度 ----------
+        function updateOverallStats() {
+            const allCards = document.querySelectorAll('.achievement-card');
+            let total = allCards.length;
+            let unlocked = 0;
+            allCards.forEach(function(card) {
+                if (card.classList.contains('unlocked')) {
+                    unlocked++;
+                }
+            });
+            const overallEl = document.getElementById('overall-stats');
+            if (overallEl) {
+                overallEl.textContent = '总体进度：' + unlocked + ' / ' + total;
+            }
+        }
+
+        // ---------- 切换成就状态 ----------
+        function toggleAchievement(card) {
+            // 如果卡片有 locked 类，去掉 locked，加上 unlocked
+            // 如果卡片有 unlocked 类，去掉 unlocked，加上 locked
+            if (card.classList.contains('locked')) {
+                card.classList.remove('locked');
+                card.classList.add('unlocked');
+            } else if (card.classList.contains('unlocked')) {
+                card.classList.remove('unlocked');
+                card.classList.add('locked');
+            } else {
+                // 默认给 locked（但理论上所有卡片初始都有 locked 或 unlocked）
+                card.classList.add('locked');
+            }
+
+            // 更新所属系列的统计
+            const series = card.dataset.series;
+            if (series) {
+                updateSeriesStats(series);
+            }
+            updateOverallStats();
+        }
+
+        // ---------- 切换系列折叠 ----------
+        window.toggleSeries = function(seriesId) {
+            const content = document.getElementById(seriesId + '-content');
+            if (!content) return;
+            content.classList.toggle('collapsed');
+        };
+
+        // ---------- 绑定卡片点击事件 ----------
+        function bindCardEvents() {
+            const cards = document.querySelectorAll('.achievement-card');
+            cards.forEach(function(card) {
+                // 移除之前绑定的监听器（防止重复绑定）
+                card.removeEventListener('click', cardClickHandler);
+                card.addEventListener('click', cardClickHandler);
+            });
+        }
+
+        function cardClickHandler(e) {
+            // 阻止事件冒泡，避免触发父级（如果有）
+            e.stopPropagation();
+            toggleAchievement(this);
+        }
+
+        // ---------- 初始化 ----------
+        function init() {
+            // 确保所有卡片初始状态正确：要么 locked 要么 unlocked
+            const cards = document.querySelectorAll('.achievement-card');
+            cards.forEach(function(card) {
+                if (!card.classList.contains('locked') && !card.classList.contains('unlocked')) {
+                    // 默认 locked
+                    card.classList.add('locked');
+                }
+            });
+
+            // 更新所有系列统计
+            const seriesSet = new Set();
+            cards.forEach(function(card) {
+                const s = card.dataset.series;
+                if (s) seriesSet.add(s);
+            });
+            seriesSet.forEach(function(s) {
+                updateSeriesStats(s);
+            });
+            updateOverallStats();
+
+            // 绑定点击事件
+            bindCardEvents();
+        }
+
+        // DOM 就绪后初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+    })();
+</script>
 
 </body>
 </html>
