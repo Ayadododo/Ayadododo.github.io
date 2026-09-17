@@ -2,965 +2,477 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>ARAM 一图流 · 海克斯大乱斗自用攻略</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ayadododo 的个人空间 — 在这里构建一些有趣的东西">
+    <title>Ayadododo · 个人空间</title>
     <style>
         :root {
-            --bg: #0a0e14;
-            --bg-card: #111820;
-            --bg-hover: #1a2230;
-            --bg-input: #151d28;
-            --border: #1e2a3a;
-            --text: #c8d0dc;
-            --text-dim: #5a6a7a;
-            --gold: #c89b3c;
-            --gold-bright: #f0c850;
-            --tier-s: #e84057;
-            --tier-a: #4a9eff;
-            --tier-b: #6b7a8a;
-            --green: #3ddc84;
-            --radius: 10px;
-            --radius-sm: 6px;
+            --bg: #05060a;
+            --text: #e8ecf4;
+            --text-dim: #8a93a6;
+            --accent: #6c8cff;
+            --accent2: #b06cff;
+            --accent3: #4de3c1;
+            --card: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.09);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        a:focus-visible { outline: 2px solid var(--accent3); outline-offset: 5px; }
+        .card::before { pointer-events: none; }
+        .card a { position: relative; text-decoration: none; }
         body {
             font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
+            line-height: 1.6;
         }
-        .container { max-width: 960px; margin: 0 auto; padding: 12px 14px; }
+        ::selection { background: rgba(108, 140, 255, 0.4); }
 
-        /* ===== 顶栏 ===== */
-        .top-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-            margin-bottom: 10px;
-        }
-        .top-bar h1 {
-            font-size: 1.15em;
-            color: var(--gold-bright);
-            white-space: nowrap;
-            letter-spacing: 1px;
-        }
-        .top-bar .ver {
-            font-size: 0.75em;
-            color: var(--text-dim);
-            margin-left: auto;
-            white-space: nowrap;
-        }
-
-        /* ===== 搜索 + 筛选 ===== */
-        .search-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .search-box {
-            flex: 1;
-            position: relative;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 10px 12px 10px 34px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text);
-            font-size: 0.95em;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .search-box input:focus { border-color: var(--gold); }
-        .search-box input::placeholder { color: var(--text-dim); }
-        .search-box::before {
-            content: "🔍";
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.85em;
+        /* ===== 星空画布 ===== */
+        #stars {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
             pointer-events: none;
         }
-        .filters {
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-        .filter-btn {
-            padding: 5px 12px;
-            font-size: 0.8em;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            color: var(--text-dim);
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .filter-btn.active {
-            background: rgba(200, 155, 60, 0.15);
-            border-color: var(--gold);
-            color: var(--gold-bright);
-        }
-        .filter-btn:hover { border-color: var(--gold); }
 
-        /* ===== 英雄网格 ===== */
-        .champ-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        .champ-cell {
-            aspect-ratio: 1;
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-            cursor: pointer;
-            position: relative;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        .champ-cell:hover, .champ-cell.selected {
-            border-color: var(--gold);
-            box-shadow: 0 0 12px rgba(200, 155, 60, 0.3);
-        }
-        .champ-cell img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .champ-cell .champ-name-tag {
-            position: absolute;
-            bottom: 0;
+        /* ===== 顶部导航 ===== */
+        nav {
+            position: fixed;
+            top: 0;
             left: 0;
             right: 0;
-            padding: 3px 4px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.85));
-            font-size: 0.7em;
-            text-align: center;
-            color: #ddd;
-            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 28px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            background: rgba(5, 6, 10, 0.55);
+            border-bottom: 1px solid var(--border);
         }
-        .rank-badge {
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 0.65em;
+        .logo {
             font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            pointer-events: none;
-            z-index: 2;
-            border: 1px solid rgba(0,0,0,0.4);
+            font-size: 1.05em;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        .rank-badge.r1 { background: #e84057; }
-        .rank-badge.r2 { background: #c89b3c; }
-        .rank-badge.r3 { background: #4a9eff; }
-        .rank-badge.r4 { background: #6b7a8a; }
-        .no-results {
-            text-align: center;
-            padding: 40px 0;
+        .nav-links { display: flex; gap: 24px; }
+        .nav-links a {
             color: var(--text-dim);
-            font-size: 0.95em;
-        }
-
-        /* ===== 详情面板 ===== */
-        .detail-panel {
-            display: none;
-            background: var(--bg-card);
-            border-radius: var(--radius) var(--radius) 0 0;
-            border: 1px solid var(--border);
-            border-bottom: none;
-            padding: 16px 14px 24px;
-            animation: slideUp 0.3s ease;
-        }
-        .detail-panel.show { display: block; }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 详情头部 */
-        .detail-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 14px;
-        }
-        .detail-portrait {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--gold);
-            flex-shrink: 0;
-        }
-        .detail-info h2 {
-            font-size: 1.3em;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-        .detail-stats {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .stat-chip {
-            font-size: 0.78em;
-            padding: 3px 10px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 12px;
-            color: var(--text);
-        }
-        .stat-chip b { color: var(--gold-bright); }
-        .close-btn {
-            margin-left: auto;
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            font-size: 1.4em;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: var(--radius-sm);
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        .close-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
-
-        /* 流派 Tab */
-        .build-tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 14px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            padding-bottom: 2px;
-        }
-        .build-tabs::-webkit-scrollbar { display: none; }
-        .build-tab {
-            padding: 8px 16px;
-            font-size: 0.85em;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            color: var(--text-dim);
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        .build-tab.active {
-            background: rgba(200, 155, 60, 0.12);
-            border-color: var(--gold);
-            color: var(--gold-bright);
-            font-weight: 600;
-        }
-
-        /* 流派内容区 */
-        .build-content { display: none; }
-        .build-content.active { display: block; }
-
-        .section-label {
-            font-size: 0.75em;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 8px;
-            padding-left: 2px;
-        }
-
-        /* 装备路线 */
-        .items-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-            padding: 10px 12px;
-            background: rgba(255,255,255,0.03);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-        .item-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-sm);
-            border: 1px solid #333;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-        .item-icon.boots { border-color: #6a4; }
-        .item-icon.core  { border-color: var(--gold); }
-        .item-sep {
-            color: var(--text-dim);
+            text-decoration: none;
             font-size: 0.9em;
-            flex-shrink: 0;
+            transition: color 0.2s;
         }
+        .nav-links a:hover { color: var(--text); }
+        @media (max-width: 560px) { .nav-links { display: none; } }
 
-        /* 可选装备 */
-        .optional-items {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-        .optional-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px 4px 4px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            font-size: 0.78em;
-            color: var(--text);
-        }
-        .optional-item img {
-            width: 24px;
-            height: 24px;
-            border-radius: 4px;
-            flex-shrink: 0;
-        }
+        main { position: relative; z-index: 1; }
 
-        /* 海克斯强化 */
-        .augment-section { margin-bottom: 14px; }
-        .augment-list {
+        /* ===== Hero ===== */
+        .hero {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-        }
-        .augment-row {
-            display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            background: rgba(255,255,255,0.03);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
+            justify-content: center;
+            text-align: center;
+            padding: 90px 20px 40px;
+            position: relative;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78em;
+            color: var(--accent3);
+            border: 1px solid rgba(77, 227, 193, 0.35);
+            background: rgba(77, 227, 193, 0.07);
+            border-radius: 999px;
+            padding: 6px 16px;
+            margin-bottom: 28px;
+            letter-spacing: 2px;
+        }
+        .badge .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--accent3);
+            box-shadow: 0 0 8px var(--accent3);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 50% { opacity: 0.35; } }
+
+        .hero h1 {
+            font-size: clamp(2.4em, 7vw, 4.6em);
+            font-weight: 800;
+            letter-spacing: 2px;
+            line-height: 1.25;
+            background: linear-gradient(120deg, #fff 30%, var(--accent) 60%, var(--accent2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .typewriter {
+            margin-top: 18px;
+            font-size: clamp(1em, 2.6vw, 1.35em);
+            color: var(--text-dim);
+            min-height: 1.8em;
+            font-weight: 300;
+        }
+        .typewriter .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.1em;
+            background: var(--accent);
+            vertical-align: text-bottom;
+            margin-left: 3px;
+            animation: blink 0.9s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .hero-actions {
+            display: flex;
+            gap: 14px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 13px 30px;
+            border-radius: 12px;
+            font-size: 0.95em;
+            text-decoration: none;
+            transition: all 0.25s;
             cursor: pointer;
-            transition: all 0.2s;
+            border: 1px solid transparent;
         }
-        .augment-row:hover {
-            background: rgba(255,255,255,0.06);
-            border-color: #444;
+        .btn-primary {
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            color: #fff;
+            box-shadow: 0 8px 28px rgba(108, 140, 255, 0.35);
         }
-        .augment-row.expanded .augment-desc {
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(108, 140, 255, 0.5);
+        }
+        .btn-ghost {
+            color: var(--text);
+            border-color: var(--border);
+            background: var(--card);
+        }
+        .btn-ghost:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-dim);
+            font-size: 0.75em;
+            letter-spacing: 3px;
+            animation: float 2.2s ease-in-out infinite;
+        }
+        @keyframes float { 50% { transform: translate(-50%, 8px); opacity: 0.5; } }
+
+        /* ===== 通用 section ===== */
+        section { max-width: 1040px; margin: 0 auto; padding: 90px 24px; }
+        .sec-title {
+            font-size: clamp(1.5em, 4vw, 2.1em);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .sec-sub {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.95em;
+            margin-bottom: 52px;
+        }
+
+        /* ===== 项目卡片 ===== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 24px;
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(108, 140, 255, 0.12), transparent 55%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(108, 140, 255, 0.45);
+            box-shadow: 0 16px 44px rgba(0, 0, 0, 0.45);
+        }
+        .card:hover::before { opacity: 1; }
+        .card .icon {
+            font-size: 2em;
+            margin-bottom: 16px;
             display: block;
         }
-        .augment-tier {
-            font-size: 0.7em;
-            font-weight: 700;
-            padding: 2px 7px;
-            border-radius: 4px;
-            min-width: 24px;
+        .card h3 { font-size: 1.1em; margin-bottom: 8px; }
+        .card p { font-size: 0.88em; color: var(--text-dim); }
+        .card .tag {
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 0.72em;
+            color: var(--accent);
+            border: 1px solid rgba(108, 140, 255, 0.35);
+            border-radius: 999px;
+            padding: 3px 12px;
+        }
+
+        /* ===== 特性条 ===== */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
             text-align: center;
-            flex-shrink: 0;
         }
-        .augment-tier.S { background: rgba(232, 64, 87, 0.2); color: var(--tier-s); }
-        .augment-tier.A { background: rgba(74, 158, 255, 0.15); color: var(--tier-a); }
-        .augment-tier.B { background: rgba(107, 122, 138, 0.15); color: var(--tier-b); }
-        .augment-name {
-            font-size: 0.88em;
-            color: #e0e6ee;
-            flex: 1;
-            min-width: 0;
+        .stat {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 12px;
+            transition: border-color 0.3s;
         }
-        .augment-desc {
-            display: none;
-            font-size: 0.78em;
-            color: var(--text-dim);
-            margin-top: 2px;
-            line-height: 1.4;
+        .stat:hover { border-color: rgba(176, 108, 255, 0.5); }
+        .stat .num {
+            font-size: 2em;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent), var(--accent3));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        .augment-tip {
-            font-size: 0.78em;
-            color: var(--gold);
-            text-align: right;
-            flex-shrink: 0;
-            max-width: 100px;
-            white-space: nowrap;
+        .stat .label { font-size: 0.82em; color: var(--text-dim); margin-top: 6px; }
+
+        /* ===== 关于 ===== */
+        .about-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 44px 36px;
+            max-width: 720px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
             overflow: hidden;
-            text-overflow: ellipsis;
         }
+        .about-box::after {
+            content: "";
+            position: absolute;
+            top: -60%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 480px;
+            height: 480px;
+            background: radial-gradient(circle, rgba(108, 140, 255, 0.16), transparent 65%);
+            pointer-events: none;
+        }
+        .about-box p { color: var(--text-dim); font-size: 0.95em; position: relative; }
+        .about-box p + p { margin-top: 12px; }
 
         /* ===== 页脚 ===== */
-        .footer {
+        footer {
             text-align: center;
-            padding: 16px 0;
-            font-size: 0.75em;
+            padding: 44px 20px;
             color: var(--text-dim);
-            border-top: 1px solid var(--border);
-            margin-top: 12px;
-        }
-        .footer a { color: var(--gold); text-decoration: none; }
-
-        /* ===== 响应式 ===== */
-        @media (min-width: 480px) {
-            .champ-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        }
-        @media (min-width: 640px) {
-            .champ-grid { grid-template-columns: repeat(6, 1fr); gap: 10px; }
-            .detail-portrait { width: 72px; height: 72px; }
-            .item-icon { width: 44px; height: 44px; }
-        }
-        @media (min-width: 800px) {
-            .champ-grid { grid-template-columns: repeat(8, 1fr); gap: 12px; }
-            .container { padding: 16px 20px; }
-        }
-
-        /* 工具提示 */
-        .tooltip {
-            position: fixed;
-            background: #1a2230;
-            border: 1px solid #3a4a5a;
-            border-radius: var(--radius-sm);
-            padding: 8px 12px;
             font-size: 0.8em;
-            color: var(--text);
-            max-width: 220px;
-            z-index: 999;
-            pointer-events: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            display: none;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
         }
-        .tooltip.show { display: block; }
-        .tooltip .tt-name { color: var(--gold-bright); font-weight: 600; margin-bottom: 3px; }
-        .tooltip .tt-desc { color: #aaa; line-height: 1.4; }
+        footer a { color: var(--accent); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* ===== 滚动渐入 ===== */
+        .reveal { opacity: 1; }
+        .reveal.visible { animation: revealIn 0.7s ease; }
+        @keyframes revealIn {
+            from { transform: translateY(16px); }
+            to { transform: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .reveal.visible { animation: none; }
+            .card, .btn { transition: none; }
+            .scroll-hint, .badge .dot, .typewriter .cursor { animation: none; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
+<canvas id="stars"></canvas>
 
-    <!-- 顶栏 -->
-    <div class="top-bar">
-        <h1>⚔️ ARAM 一图流</h1>
-        <span class="ver">v16.16 · ARAM</span>
+<nav>
+    <span class="logo">&lt;A /&gt; Ayadododo</span>
+    <div class="nav-links">
+        <a href="#projects">项目</a>
+        <a href="#about">关于</a>
+        <a href="https://github.com/Ayadododo" target="_blank" rel="noopener">GitHub</a>
     </div>
+</nav>
 
-    <!-- 搜索 -->
-    <div class="search-row">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="搜索英雄..." autocomplete="off">
+<main>
+    <header class="hero">
+        <span class="badge"><span class="dot"></span>WELCOME TO MY SPACE</span>
+        <h1>你好，我是 Ayadododo</h1>
+        <div class="typewriter"><span id="tw"></span><span class="cursor"></span></div>
+        <div class="hero-actions">
+            <a class="btn btn-primary" href="#projects">探索项目 →</a>
+            <a class="btn btn-ghost" href="https://github.com/Ayadododo" target="_blank" rel="noopener">GitHub ⭐</a>
         </div>
-    </div>
+        <div class="scroll-hint">SCROLL ↓</div>
+    </header>
 
-    <!-- 定位筛选 -->
-    <div class="filters" id="filters">
-        <button class="filter-btn active" data-role="all">全部</button>
-        <button class="filter-btn" data-role="mage">🧙 法师</button>
-        <button class="filter-btn" data-role="marksman">🏹 射手</button>
-        <button class="filter-btn" data-role="tank">🛡️ 坦克</button>
-        <button class="filter-btn" data-role="assassin">🗡️ 刺客</button>
-        <button class="filter-btn" data-role="fighter">⚔️ 战士</button>
-        <button class="filter-btn" data-role="support">💚 辅助</button>
-    </div>
-
-    <!-- 英雄网格 -->
-    <div class="champ-grid" id="champGrid"></div>
-    <div class="no-results" id="noResults" style="display:none">未找到匹配的英雄</div>
-
-    <!-- 详情面板 -->
-    <div class="detail-panel" id="detailPanel">
-        <div class="detail-header">
-            <img class="detail-portrait" id="detailPortrait" src="" alt="">
-            <div class="detail-info">
-                <h2 id="detailName"></h2>
-                <div class="detail-stats" id="detailStats"></div>
+    <section id="projects">
+        <h2 class="sec-title reveal">正在构建</h2>
+        <p class="sec-sub reveal">一些有趣、实用的小东西，持续更新中</p>
+        <div class="cards">
+            <div class="card reveal">
+                <span class="icon">🧭</span>
+                <h3>开源探索</h3>
+                <p>代码、实验与灵感的集合。从一个小想法开始，做出真正可用的东西。</p>
+                <a class="tag" href="https://github.com/Ayadododo?tab=repositories" target="_blank" rel="noopener">浏览代码仓库 ↗</a>
             </div>
-            <button class="close-btn" id="closeDetail" title="关闭">✕</button>
+            <div class="card reveal">
+                <span class="icon">⚡</span>
+                <h3>效率实验室</h3>
+                <p>把重复的事情交给工具，把时间留给创造。这里将收录日常实用小工具。</p>
+                <span class="tag">筹备中</span>
+            </div>
+            <div class="card reveal">
+                <span class="icon">🚀</span>
+                <h3>新项目孵化中</h3>
+                <p>更实用的东西正在路上，敬请期待。有想法欢迎来 GitHub 提 Issue。</p>
+                <span class="tag">Coming Soon</span>
+            </div>
         </div>
-        <div class="build-tabs" id="buildTabs"></div>
-        <div id="buildContents"></div>
-    </div>
+    </section>
 
-    <div class="footer">
-        ARAM 一图流 · 数据仅供参考 · 自用勿喷 · Patch 16.16<br>
-        装备图标来自 <a href="https://ddragon.leagueoflegends.com" target="_blank">Data Dragon</a>
-    </div>
-</div>
+    <section id="stats">
+        <div class="stats">
+            <div class="stat reveal"><div class="num">∞</div><div class="label">好奇心</div></div>
+            <div class="stat reveal"><div class="num">100</div><div class="label">% 开源热情</div></div>
+            <div class="stat reveal"><div class="num">0</div><div class="label"> Bug 遗留目标</div></div>
+            <div class="stat reveal"><div class="num">🛠</div><div class="label">持续构建中</div></div>
+        </div>
+    </section>
 
-<!-- 装备/海克斯悬浮提示 -->
-<div class="tooltip" id="tooltip">
-    <div class="tt-name" id="ttName"></div>
-    <div class="tt-desc" id="ttDesc"></div>
-</div>
+    <section id="about">
+        <h2 class="sec-title reveal">关于我</h2>
+        <p class="sec-sub reveal">Who am I</p>
+        <div class="about-box reveal">
+            <p>一名喜欢折腾的开发者，相信「小工具也能解决大问题」。</p>
+            <p>这里是我的数字花园，种下想法，等待发芽。</p>
+            <p style="margin-top:24px;color:var(--text);">📮 找到我：<a href="https://github.com/Ayadododo" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">GitHub @Ayadododo</a></p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    © 2026 Ayadododo · Built with ❤️ &amp; vanilla JS · Hosted on <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a>
+</footer>
 
 <script>
-// ============================================================
-// Data Dragon 配置
-// 更新版本号即可刷新所有装备图标
-// ============================================================
-const DDRAGON_VER = '16.16.1';
-const ITEM_IMG = (id) => `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VER}/img/item/${id}.png`;
-const CHAMP_IMG = (name) => `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VER}/img/champion/${name}.png`;
+// ===== 星空粒子背景 =====
+(function () {
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let stars = [], W, H;
 
-// ============================================================
-// 英雄数据
-// 结构：每个英雄可有多个流派 (builds)，每个流派含装备 + 海克斯
-// 装备 ID 来自 Data Dragon 15.5.1
-// 新增英雄直接在 CHAMPIONS 数组末尾添加即可
-// ============================================================
-const CHAMPIONS = [
-    {
-        id: 'Vayne',
-        name: '薇恩',
-        rank: 1,
-        roles: ['marksman'],
-        tier: 'S+',
-        winRate: '57.71%',
-        builds: [
-            {
-                name: '暴击收割流',
-                desc: '破败起手，收集者斩杀，无尽暴击收割',
-                skillOrder: '主 Q 副 W',
-                coreItems: [
-                    { id: 3153, name: '破败王者之刃', tip: '百分比伤害 + 吸血' },
-                    { id: 3006, name: '狂战士胫甲', tip: '攻速鞋' },
-                    { id: 6676, name: '收集者', tip: '5% 血量斩杀' },
-                    { id: 3031, name: '无尽之刃', tip: '暴击伤害翻倍' },
-                ],
-                optionalItems: [
-                    { id: 3046, name: '幻影之舞' },
-                    { id: 3139, name: '水银弯刀' },
-                    { id: 3026, name: '守护天使' },
-                ],
-                augments: [
-                    { tier: 'S', name: '双发快射', desc: '攻击有概率触发额外一次攻击，暴击收割核心', tip: '核心强化' },
-                    { tier: 'S', name: '连拨击锤', desc: '连续攻击叠加伤害，配合高攻速越打越痛', tip: '越打越猛' },
-                    { tier: 'S', name: '双刀流', desc: '额外攻击段数，配合破败快速触发', tip: '触发破败' },
-                    { tier: 'S', name: '暴击飞弹', desc: '暴击时发射额外弹体，收集者 + 无尽双暴击收益', tip: '暴击联动' },
-                ],
-                buildNote: '暴击+攻击特效三环优先'
-            }
-        ]
-    },
-    {
-        id: 'Graves',
-        name: '法外狂徒',
-        rank: 2,
-        roles: ['marksman', 'fighter'],
-        tier: 'S+',
-        winRate: '57.29%',
-        builds: [
-            {
-                name: '穿甲爆发流',
-                desc: 'E贴脸一喷秒人，被动护甲叠加越打越硬 · 攻击力+暴击',
-                skillOrder: '主 Q 副 E',
-                coreItems: [
-                    { id: 6697, name: '狂妄', tip: '击杀叠攻击力' },
-                    { id: 3158, name: '明朗之靴', tip: '技能急速' },
-                    { id: 6676, name: '收集者', tip: '5% 血量斩杀' },
-                    { id: 3031, name: '无尽之刃', tip: '暴击伤害翻倍' },
-                ],
-                optionalItems: [
-                    { id: 3139, name: '水银弯刀' },
-                    { id: 3026, name: '守护天使' },
-                    { id: 3072, name: '饮血剑' },
-                ],
-                augments: [
-                    { tier: 'S', name: '亮剑', desc: '攻击额外伤害，E贴脸一喷更痛', tip: '核心强化' },
-                    { tier: 'S', name: '升级无尽之刃', desc: '暴击伤害大幅提升，配合收集者斩杀线更高', tip: '暴击加强' },
-                    { tier: 'S', name: '灵魂虹吸', desc: '击杀回复生命值和法力，团战持续作战', tip: '团战续航' },
-                    { tier: 'S', name: '灵巧猎手', desc: '参与击杀减少装备冷却，滚雪球越打越快', tip: '滚雪球' },
-                ],
-                buildNote: '攻击力+暴击'
-            }
-        ]
-    },
-    {
-        id: 'Caitlyn',
-        name: '皮城女警',
-        rank: 3,
-        roles: ['marksman'],
-        tier: 'S+',
-        winRate: '55.74%',
-        builds: [
-            {
-                name: '暴击狙击流',
-                desc: '超远距离爆头 + W陷阱控场，团战持续输出 · 暴击+距离',
-                skillOrder: '主 Q 副 W',
-                coreItems: [
-                    { id: 3031, name: '无尽之刃', tip: '暴击伤害翻倍' },
-                    { id: 3006, name: '狂战士胫甲', tip: '攻速鞋' },
-                    { id: 3094, name: '疾射火炮', tip: '攻击距离 + 暴击充能' },
-                    { id: 6675, name: '纳沃利迅刃', tip: '暴击减技能CD' },
-                ],
-                optionalItems: [
-                    { id: 3033, name: '致死宣告' },
-                    { id: 3139, name: '水银弯刀' },
-                    { id: 3026, name: '守护天使' },
-                ],
-                augments: [
-                    { tier: 'S', name: '亮出你的剑', desc: '攻击额外伤害，爆头更痛', tip: '核心强化' },
-                    { tier: 'S', name: '关键暴击', desc: '暴击伤害大幅提升，爆头暴击秒脆皮', tip: '暴击加强' },
-                    { tier: 'S', name: '暴击飞弹', desc: '暴击时发射额外弹体，配合火炮远距离触发', tip: '距离联动' },
-                    { tier: 'S', name: '升级无尽之刃', desc: '暴击伤害进一步提升，后期一枪半血', tip: '后期核心' },
-                ],
-                buildNote: '暴击+距离'
-            }
-        ]
-    },
-    {
-        id: 'TahmKench',
-        name: '河流之王',
-        rank: 4,
-        roles: ['tank', 'fighter'],
-        tier: 'A',
-        winRate: '53.1%',
-        builds: [
-            {
-                name: '纯肉坦克',
-                desc: '前排扛伤 + W 套人保护，团战搅屎棍',
-                skillOrder: '主 Q 副 W',
-                coreItems: [
-                    { id: 3084, name: '心之钢', tip: '叠血量无限成长' },
-                    { id: 3111, name: '水银之靴', tip: '韧性 + 魔抗' },
-                    { id: 3065, name: '振奋盔甲', tip: '回复增强 + 魔抗' },
-                    { id: 3075, name: '荆棘之甲', tip: '反甲克物理' },
-                ],
-                optionalItems: [
-                    { id: 3068, name: '日炎圣盾' },
-                    { id: 3190, name: '钢铁烈阳之匣' },
-                    { id: 3071, name: '黑色切割者' },
-                ],
-                augments: [
-                    { tier: 'S', name: '坦克之魂', desc: '获得大量额外生命值和韧性，坦度翻倍', tip: '核心强化' },
-                    { tier: 'S', name: '不灭之握', desc: '战斗中持续回血 + 增加最大生命值', tip: '持续作战' },
-                    { tier: 'A', name: '生命之泉', desc: '技能命中回血，Q 减速也能触发', tip: '续航' },
-                    { tier: 'A', name: '石像鬼', desc: '获得巨额护盾，关键时刻保命', tip: '保命' },
-                    { tier: 'B', name: '再生', desc: '低血量时大幅提升回复能力', tip: '逆风保命' },
-                ]
-            },
-            {
-                name: 'AP 伤害流',
-                desc: 'Q 痛 W 吞人秒杀，娱乐向但伤害恐怖',
-                skillOrder: '主 Q 副 E',
-                coreItems: [
-                    { id: 6655, name: '卢登的伙伴', tip: '法术爆发' },
-                    { id: 3020, name: '法师之靴', tip: '法穿鞋' },
-                    { id: 3089, name: '灭世者的死帽', tip: '法强翻倍' },
-                    { id: 3135, name: '虚空之杖', tip: '法术穿透' },
-                ],
-                optionalItems: [
-                    { id: 3157, name: '中娅沙漏' },
-                    { id: 3165, name: '莫雷洛秘典' },
-                    { id: 3116, name: '瑞莱的冰晶节杖' },
-                ],
-                augments: [
-                    { tier: 'S', name: '法师之触', desc: '技能伤害大幅提升，Q 一口半血', tip: '核心强化' },
-                    { tier: 'S', name: '黄油面包', desc: 'Q 冷却大幅缩短', tip: '技能循环' },
-                    { tier: 'A', name: '奥术彗星', desc: '技能命中额外伤害', tip: '消耗加强' },
-                    { tier: 'A', name: '回声', desc: '技能命中弹射额外目标', tip: '团战 AOE' },
-                    { tier: 'B', name: '法力循环', desc: '技能消耗降低', tip: '续航' },
-                ]
-            }
-        ]
-    },
-    {
-        id: 'Teemo',
-        name: '迅捷斥候',
-        roles: ['mage'],
-        tier: 'B',
-        winRate: '48.7%',
-        builds: [
-            {
-                name: '虚幻武器流',
-                desc: '电刀清线 + 残疫减抗 + 大面具持续灼烧',
-                skillOrder: '主 E 副 Q',
-                coreItems: [
-                    { id: 3087, name: '夺萃之镰', tip: '电刀替代 · 攻击链式弹射' },
-                    { id: 3118, name: '残疫', tip: '技能急速 + 法力 · 技能伤害减抗' },
-                    { id: 4633, name: '兰德里的折磨', tip: '大面具 · 百分比烧血' },
-                    { id: 3089, name: '灭世者的死帽', tip: '法强翻倍' },
-                ],
-                optionalItems: [
-                    { id: 3135, name: '虚空之杖' },
-                    { id: 3157, name: '中娅沙漏' },
-                    { id: 3165, name: '莫雷洛秘典' },
-                ],
-                augments: [
-                    { tier: 'S', name: '黄油面包', desc: 'R 冷却大幅缩短，配合大面具蘑菇持续灼烧', tip: '核心强化' },
-                    { tier: 'S', name: '法师之触', desc: '技能伤害大幅提升，电刀弹射也吃加成', tip: '伤害翻倍' },
-                    { tier: 'A', name: '奥术彗星', desc: '技能命中额外伤害，E 毒伤持续触发', tip: '消耗加强' },
-                    { tier: 'A', name: '回声', desc: '技能命中弹射额外目标，配合电刀双重弹射', tip: '团战 AOE' },
-                    { tier: 'B', name: '法力循环', desc: '技能消耗降低，蘑菇不停放', tip: '续航' },
-                ]
-            }
-        ]
+    function resize() {
+        W = canvas.width = innerWidth;
+        H = canvas.height = innerHeight;
+        const count = Math.min(220, Math.floor(W * H / 6000));
+        stars = Array.from({ length: count }, () => ({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            r: Math.random() * 1.4 + 0.3,
+            base: Math.random() * 0.6 + 0.25,
+            phase: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.9 + 0.3,
+            hue: Math.random() < 0.25 ? (Math.random() < 0.5 ? 222 : 268) : null
+        }));
     }
-];
 
-// ============================================================
-// 应用状态
-// ============================================================
-let currentChamp = null;
-let currentBuildIdx = 0;
-let activeFilter = 'all';
-let searchQuery = '';
+    function draw(t) {
+        ctx.clearRect(0, 0, W, H);
+        for (const s of stars) {
+            const alpha = reduceMotion ? s.base : s.base * (0.55 + 0.45 * Math.sin(t * 0.001 * s.speed + s.phase));
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = s.hue !== null
+                ? `hsla(${s.hue}, 90%, 72%, ${alpha})`
+                : `rgba(255,255,255,${alpha})`;
+            ctx.fill();
+        }
+        if (!reduceMotion) requestAnimationFrame(draw);
+    }
 
-// ============================================================
-// 工具函数
-// ============================================================
-function $(sel) { return document.querySelector(sel); }
-function $$(sel) { return document.querySelectorAll(sel); }
+    addEventListener('resize', resize);
+    resize();
+    requestAnimationFrame(draw);
+})();
 
-// 拼音首字母简拼（简单实现，覆盖常见场景）
-function toPinyinAbbr(str) {
-    const map = {
-        '寒':'h','冰':'b','射':'s','手':'s','光':'g','辉':'h','女':'n','郎':'l',
-        '无':'w','极':'j','剑':'j','圣':'s','琴':'q','瑟':'s','仙':'x','暴':'b',
-        '走':'z','萝':'l','莉':'l','发':'f','条':'t','魔':'m','鬼':'g','才':'c',
-        '邪':'x','恶':'e','小':'x','法':'f','师':'s','末':'m','日':'r','天':'t',
-        '使':'s','虚':'x','空':'k','之':'z','眼':'y','金':'j','克':'k','斯':'s',
-        '德':'d','玛':'m','西':'x','亚':'y','暗':'a','夜':'y','猎':'l','人':'r',
-        '赏':'s','金':'j','猎':'l','寡':'g','妇':'f','刀':'d','锋':'f','之':'z',
-        '影':'y','劫':'j','不':'b','祥':'x','之':'z','刃':'r','卡':'k','特':'t',
-        '琳':'l','娜':'n','安':'a','妮':'n','阿':'a','木':'m','姆':'m','墨':'m',
-        '菲':'f','特':'t','拉':'l','凯':'k','尔':'e','瓦':'w','洛':'l','兰':'l',
-        '博':'b','慎':'s','李':'l','青':'q','盲':'m','僧':'s','赵':'z','信':'x',
-        '盖':'g','伦':'l','拉':'l','克':'k','丝':'s','薇':'w','恩':'e','烬':'j',
-        '韦':'w','鲁':'l','斯':'s','泽':'z','丽':'l','佐':'z','妮':'n','蔻':'k',
-        '塞':'s','拉':'l','索':'s','斯':'s','永':'y','恩':'e','亚':'y','索':'s',
-        '萨':'s','科':'k','易':'y','奥':'a','拉':'l','夫':'f','蛮':'m','王':'w',
-        '提':'t','莫':'m','锐':'r','雯':'w','薇':'w','恩':'e','卡':'k','莎':'s',
-        '玛':'m','尔':'e','扎':'z','哈':'h','科':'k','加':'j','斯':'s','伊':'y',
-        '泽':'z','瑞':'r','尔':'e','辛':'x','德':'d','拉':'l','维':'w','克':'k',
-        '托':'t','斯':'s','基':'j','兰':'l','博':'b',
-        '河':'h','流':'l','皮':'p','城':'c','警':'j','迅':'x','捷':'j',
-        '斥':'c','候':'h','徒':'t','外':'w','狂':'k',
-    };
-    return str.split('').map(c => map[c] || c).join('').toLowerCase();
-}
-
-// ============================================================
-// 渲染英雄网格
-// ============================================================
-function renderGrid() {
-    const grid = $('#champGrid');
-    const noRes = $('#noResults');
-
-    const filtered = CHAMPIONS.filter(c => {
-        const matchRole = activeFilter === 'all' || c.roles.includes(activeFilter);
-        const q = searchQuery.toLowerCase();
-        const matchSearch = !q ||
-            c.name.includes(q) ||
-            c.id.toLowerCase().includes(q) ||
-            toPinyinAbbr(c.name).includes(q);
-        return matchRole && matchSearch;
-    });
-
-    if (filtered.length === 0) {
-        grid.innerHTML = '';
-        noRes.style.display = 'block';
+// ===== 打字机 =====
+(function () {
+    const lines = ['构建一些有趣的东西 ✨', '热爱开源与分享 🌱', '代码即诗，工具即效率 ⚡'];
+    const el = document.getElementById('tw');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        el.textContent = lines[0];
         return;
     }
-    noRes.style.display = 'none';
+    let li = 0, ci = 0, deleting = false;
 
-    grid.innerHTML = filtered.map(c => `
-        <div class="champ-cell ${currentChamp && currentChamp.id === c.id ? 'selected' : ''}"
-             data-id="${c.id}">
-            ${c.rank ? `<div class="rank-badge r${c.rank}">${c.rank}</div>` : ''}
-            <img src="${CHAMP_IMG(c.id)}" alt="${c.name}" loading="lazy"
-                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%231a2230%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2258%22 text-anchor=%22middle%22 fill=%22%23555%22 font-size=%2224%22>${c.name[0]}</text></svg>'">
-            <div class="champ-name-tag">${c.name}</div>
-        </div>
-    `).join('');
-
-    grid.querySelectorAll('.champ-cell').forEach(cell => {
-        cell.addEventListener('click', () => {
-            const champ = CHAMPIONS.find(c => c.id === cell.dataset.id);
-            if (champ) selectChamp(champ);
-        });
-    });
-}
-
-// ============================================================
-// 选中英雄 → 展开详情
-// ============================================================
-function selectChamp(champ) {
-    currentChamp = champ;
-    // 恢复上次的流派 tab
-    const saved = localStorage.getItem('aram_build_' + champ.id);
-    currentBuildIdx = saved ? parseInt(saved, 10) : 0;
-    if (currentBuildIdx >= champ.builds.length) currentBuildIdx = 0;
-
-    renderGrid();
-    renderDetail();
-    const panel = $('#detailPanel');
-    panel.classList.add('show');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    localStorage.setItem('aram_last_champ', champ.id);
-}
-
-// ============================================================
-// 渲染详情面板
-// ============================================================
-function renderDetail() {
-    const c = currentChamp;
-    if (!c) return;
-
-    // 头部
-    $('#detailPortrait').src = CHAMP_IMG(c.id);
-    $('#detailName').textContent = c.name;
-    $('#detailStats').innerHTML = `
-        <span class="stat-chip">Tier <b>${c.tier}</b></span>
-        <span class="stat-chip">胜率 <b>${c.winRate}</b></span>
-        <span class="stat-chip">流派 <b>${c.builds.length}</b></span>
-    `;
-
-    // 流派 Tab
-    $('#buildTabs').innerHTML = c.builds.map((b, i) => `
-        <div class="build-tab ${i === currentBuildIdx ? 'active' : ''}" data-idx="${i}">
-            ${b.name}
-        </div>
-    `).join('');
-
-    $('#buildTabs').querySelectorAll('.build-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            currentBuildIdx = parseInt(tab.dataset.idx, 10);
-            localStorage.setItem('aram_build_' + c.id, currentBuildIdx);
-            renderDetail();
-        });
-    });
-
-    // 流派内容
-    renderBuildContent();
-}
-
-// ============================================================
-// 渲染单个流派的装备 + 海克斯
-// ============================================================
-function renderBuildContent() {
-    const b = currentChamp.builds[currentBuildIdx];
-    const container = $('#buildContents');
-
-    let html = '<div class="build-content active">';
-
-    // 流派描述
-    html += `<p style="font-size:0.85em;color:var(--text-dim);margin-bottom:12px;">
-        ${b.desc} · <b style="color:var(--gold)">${b.skillOrder}</b>
-    </p>`;
-
-    // 核心装备
-    html += '<div class="section-label">🛠 核心装备</div>';
-    html += '<div class="items-row">';
-    b.coreItems.forEach((item, i) => {
-        if (i > 0) html += '<span class="item-sep">›</span>';
-        html += `<img class="item-icon core" src="${ITEM_IMG(item.id)}" alt="${item.name}"
-                      data-tip-name="${item.name}" data-tip-desc="${item.tip}"
-                      onerror="this.style.display='none'">`;
-    });
-    html += '</div>';
-
-    // 可选装备
-    if (b.optionalItems && b.optionalItems.length > 0) {
-        html += '<div class="section-label" style="margin-top:10px">📦 可选装备</div>';
-        html += '<div class="optional-items">';
-        b.optionalItems.forEach(item => {
-            html += `<div class="optional-item" data-tip-name="${item.name}" data-tip-desc="灵活选择">
-                <img src="${ITEM_IMG(item.id)}" alt="${item.name}" onerror="this.style.display='none'">
-                <span>${item.name}</span>
-            </div>`;
-        });
-        html += '</div>';
+    function tick() {
+        const line = lines[li];
+        el.textContent = line.slice(0, ci);
+        let delay = deleting ? 40 : 110;
+        if (!deleting && ci === line.length) { delay = 2000; deleting = true; }
+        else if (deleting && ci === 0) { deleting = false; li = (li + 1) % lines.length; delay = 400; }
+        else ci += deleting ? -1 : 1;
+        setTimeout(tick, delay);
     }
+    tick();
+})();
 
-    // 海克斯强化
-    html += '<div class="augment-section">';
-    html += '<div class="section-label">💎 海克斯强化推荐</div>';
-    html += '<div class="augment-list">';
-    b.augments.forEach(aug => {
-        html += `
-            <div class="augment-row" onclick="this.classList.toggle('expanded')">
-                <span class="augment-tier ${aug.tier}">${aug.tier}</span>
-                <div class="augment-name">
-                    ${aug.name}
-                    <div class="augment-desc">${aug.desc}</div>
-                </div>
-                <span class="augment-tip">${aug.tip}</span>
-            </div>`;
-    });
-    html += '</div></div>';
-
-    // 流派备注
-    if (b.buildNote) {
-        html += `<p style="font-size:0.82em;color:var(--gold);margin-top:8px;text-align:center;">💡 ${b.buildNote}</p>`;
-    }
-
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-// ============================================================
-// 筛选 & 搜索
-// ============================================================
-$('#filters').addEventListener('click', e => {
-    const btn = e.target.closest('.filter-btn');
-    if (!btn) return;
-    $$('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeFilter = btn.dataset.role;
-    renderGrid();
-});
-
-$('#searchInput').addEventListener('input', e => {
-    searchQuery = e.target.value.trim();
-    renderGrid();
-});
-
-// 关闭详情
-$('#closeDetail').addEventListener('click', () => {
-    currentChamp = null;
-    $('#detailPanel').classList.remove('show');
-    renderGrid();
-});
-
-// ============================================================
-// 装备/海克斯悬浮提示（桌面端）
-// ============================================================
-const tooltip = $('#tooltip');
-document.addEventListener('mouseover', e => {
-    const tipEl = e.target.closest('[data-tip-name]');
-    if (!tipEl) { tooltip.classList.remove('show'); return; }
-    $('#ttName').textContent = tipEl.dataset.tipName;
-    $('#ttDesc').textContent = tipEl.dataset.tipDesc || '';
-    tooltip.classList.add('show');
-});
-document.addEventListener('mousemove', e => {
-    if (!tooltip.classList.contains('show')) return;
-    const x = Math.min(e.clientX + 12, window.innerWidth - 230);
-    const y = Math.min(e.clientY + 12, window.innerHeight - 80);
-    tooltip.style.left = x + 'px';
-    tooltip.style.top = y + 'px';
-});
-document.addEventListener('mouseout', e => {
-    if (!e.target.closest('[data-tip-name]')) tooltip.classList.remove('show');
-});
-
-// ============================================================
-// 初始化
-// ============================================================
-(function init() {
-    renderGrid();
-    // 恢复上次选中的英雄
-    const lastId = localStorage.getItem('aram_last_champ');
-    if (lastId) {
-        const champ = CHAMPIONS.find(c => c.id === lastId);
-        if (champ) selectChamp(champ);
-    }
+// ===== 滚动渐入 =====
+(function () {
+    if (!('IntersectionObserver' in window)) return;
+    document.documentElement.classList.add('motion-ready');
+    const io = new IntersectionObserver(entries => {
+        for (const e of entries) {
+            if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+        }
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 })();
 </script>
 

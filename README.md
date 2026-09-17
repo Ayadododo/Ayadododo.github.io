@@ -1,46 +1,35 @@
-# ARAM 一图流 · 海克斯大乱斗自用攻略
+# Ayadododo · 个人空间
 
-移动端优化的 LOL 海克斯大乱斗 (ARAM) 英雄出装 + 海克斯强化速查工具。
+一个深色星空风格的个人落地页，使用 HTML、CSS 和原生 JavaScript 构建，无框架、无构建步骤、无第三方运行时依赖。
 
-## 功能
+## 页面内容
 
-- 🎯 英雄搜索（支持中文、拼音首字母）
-- 🏷️ 按定位筛选（法师/射手/坦克/刺客/战士/辅助）
-- 📋 每个英雄多个流派出装推荐
-- 💎 海克斯强化分级推荐（S/A/B）
-- 💾 自动记忆上次选择
-- 📱 移动端优先，单手可操作
+- 星空粒子背景、渐变标题和打字机文案。
+- 项目展示卡片、GitHub 仓库入口和个人介绍。
+- 自适应布局、滚动渐入、键盘焦点样式。
+- 支持系统“减少动态效果”偏好；禁用 JavaScript 时主要内容仍可阅读。
 
-## 数据扩展
+“效率实验室”和“新项目”目前为筹备占位，并非已上线工具。旧版 ARAM 工具不再出现在首页，源码保留在 Git 历史的 `c902136` 提交中。
 
-编辑 `index.html` 中的 `CHAMPIONS` 数组即可添加新英雄，结构如下：
+## 本地预览
 
-```javascript
-{
-    id: 'ChampionName',   // Data Dragon 英雄 ID
-    name: '中文名',
-    roles: ['mage'],      // 定位标签
-    tier: 'A',            // 强度评级
-    winRate: '52.0%',
-    builds: [
-        {
-            name: '流派名',
-            desc: '一句话说明',
-            skillOrder: '主 Q 副 W',
-            coreItems: [{ id: 3089, name: '灭世者的死帽', tip: '法强翻倍' }],
-            optionalItems: [{ id: 3157, name: '中娅沙漏' }],
-            augments: [{ tier: 'S', name: '强化名', desc: '效果', tip: '一句话' }]
-        }
-    ]
-}
+安装 Python 3 后，在仓库根目录运行：
+
+```sh
+python -m http.server 8080 --bind 127.0.0.1
 ```
 
-装备 ID 查询：https://ddragon.leagueoflegends.com
+打开 http://127.0.0.1:8080 。也可直接打开 `index.html`。
+
+## 自定义
+
+所有页面内容、样式和脚本都在 `index.html`：
+
+- `:root` 定义主题配色。
+- `#projects` 定义项目卡片及链接。
+- `#about` 定义个人介绍。
+- 打字机脚本的 `lines` 数组定义轮播文案。
 
 ## 部署
 
-推送至 `main` 分支后，GitHub Pages 自动部署。
-
-```
-https://Ayadododo.github.io
-```
+将代码推送到 GitHub 后，按仓库 Settings → Pages 中配置的发布分支部署。线上地址：https://Ayadododo.github.io 。本地编辑不会自动发布。
