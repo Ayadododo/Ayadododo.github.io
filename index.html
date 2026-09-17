@@ -296,6 +296,283 @@
         .about-box p { color: var(--text-dim); font-size: 0.95em; position: relative; }
         .about-box p + p { margin-top: 12px; }
 
+        /* ===== 工具箱 ===== */
+        #tools .tool-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .tool-tab {
+            padding: 9px 18px;
+            font-size: 0.85em;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .tool-tab:hover { border-color: var(--accent); color: var(--text); }
+        .tool-tab.active {
+            background: linear-gradient(90deg, rgba(108, 140, 255, 0.18), rgba(176, 108, 255, 0.18));
+            border-color: var(--accent);
+            color: var(--text);
+        }
+        .tool-panel {
+            display: none;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px 26px;
+        }
+        .tool-panel.active { display: block; animation: revealIn 0.4s ease; }
+        .tool-panel h3 {
+            text-align: center;
+            font-size: 1.15em;
+            margin-bottom: 6px;
+        }
+        .tool-panel .panel-sub {
+            text-align: center;
+            font-size: 0.78em;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+        .tool-panel .hint {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 0.72em;
+            color: var(--text-dim);
+            opacity: 0.75;
+        }
+        .t-field { margin-bottom: 14px; }
+        .t-field label {
+            display: block;
+            font-size: 0.78em;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+        }
+        .t-field input {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.92em;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .t-field input:focus { border-color: var(--accent); }
+        .t-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 14px;
+        }
+        @media (max-width: 560px) { .t-grid { grid-template-columns: 1fr; } }
+        .t-radio-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+            justify-content: center;
+        }
+        .t-radio {
+            padding: 7px 16px;
+            font-size: 0.8em;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .t-radio.selected {
+            border-color: var(--accent3);
+            color: var(--accent3);
+            background: rgba(77, 227, 193, 0.08);
+        }
+        .t-radio input { display: none; }
+        .t-btn {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            margin: 6px 0 18px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .t-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(108, 140, 255, 0.4); }
+        .t-btn.danger {
+            background: none;
+            border: 1px solid rgba(255, 107, 122, 0.5);
+            color: #ff6b7a;
+        }
+        .t-result { display: none; }
+        .t-result.show { display: block; animation: revealIn 0.35s ease; }
+        .t-result table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88em;
+        }
+        .t-result td { padding: 9px 4px; border-bottom: 1px solid var(--border); }
+        .t-result td.label { color: var(--text-dim); }
+        .t-result td.value { text-align: right; font-variant-numeric: tabular-nums; }
+        .t-result tr.total td {
+            border-bottom: none;
+            padding-top: 14px;
+            font-size: 1.08em;
+            font-weight: 700;
+        }
+        .t-result tr.total td.value {
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* 天气 */
+        .wx-now {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .wx-temp { font-size: 2.6em; font-weight: 800; }
+        .wx-desc { color: var(--text-dim); font-size: 0.88em; }
+        .wx-meta { display: flex; gap: 14px; font-size: 0.78em; color: var(--text-dim); flex-wrap: wrap; }
+        .wx-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 9px 4px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85em;
+        }
+        .wx-row .dim { color: var(--text-dim); }
+        .wx-loading { text-align: center; color: var(--text-dim); font-size: 0.85em; padding: 30px 0; }
+
+        /* 新闻 */
+        .news-item {
+            display: flex;
+            gap: 12px;
+            padding: 9px 0;
+            font-size: 0.86em;
+            line-height: 1.6;
+            border-bottom: 1px solid var(--border);
+        }
+        .news-item:last-child { border-bottom: none; }
+        .news-idx {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(108, 140, 255, 0.15);
+            color: var(--accent);
+            font-size: 0.75em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+        .news-date { text-align: center; color: var(--accent3); font-size: 0.8em; margin-bottom: 14px; }
+
+        /* LLM 表格 */
+        .llm-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .llm-table { width: 100%; border-collapse: collapse; font-size: 0.8em; min-width: 640px; }
+        .llm-table th, .llm-table td {
+            padding: 9px 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            white-space: nowrap;
+        }
+        .llm-table th { color: var(--text-dim); font-weight: 600; font-size: 0.9em; }
+        .llm-table td.cost {
+            color: var(--accent3);
+            font-variant-numeric: tabular-nums;
+        }
+        .llm-filter { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+        .llm-tag {
+            padding: 5px 14px;
+            font-size: 0.75em;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .llm-tag.active { border-color: var(--accent); color: var(--accent); background: rgba(108, 140, 255, 0.1); }
+        .llm-calc-result {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent), var(--accent3));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* 花费清单 */
+        .exp-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .exp-row input {
+            flex: 1;
+            min-width: 0;
+            padding: 9px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.85em;
+            outline: none;
+        }
+        .exp-row input:focus { border-color: var(--accent); }
+        .exp-row .exp-amt { flex: 0 0 110px; }
+        .exp-del {
+            flex-shrink: 0;
+            width: 36px;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .exp-del:hover { border-color: #ff6b7a; color: #ff6b7a; }
+        .exp-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 4px;
+            font-size: 1.05em;
+            font-weight: 700;
+        }
+        .exp-total span:last-child {
+            background: linear-gradient(90deg, var(--accent), var(--accent3));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-variant-numeric: tabular-nums;
+        }
+        .exp-empty {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.8em;
+            padding: 14px 0;
+        }
+
         /* ===== 页脚 ===== */
         footer {
             text-align: center;
@@ -333,6 +610,7 @@
     <span class="logo">&lt;A /&gt; Ayadododo</span>
     <div class="nav-links">
         <a href="#projects">项目</a>
+        <a href="#tools">工具</a>
         <a href="#about">关于</a>
         <a href="https://github.com/Ayadododo" target="_blank" rel="noopener">GitHub</a>
     </div>
@@ -344,7 +622,7 @@
         <h1>你好，我是 Ayadododo</h1>
         <div class="typewriter"><span id="tw"></span><span class="cursor"></span></div>
         <div class="hero-actions">
-            <a class="btn btn-primary" href="#projects">探索项目 →</a>
+            <a class="btn btn-primary" href="#tools">打开工具箱 →</a>
             <a class="btn btn-ghost" href="https://github.com/Ayadododo" target="_blank" rel="noopener">GitHub ⭐</a>
         </div>
         <div class="scroll-hint">SCROLL ↓</div>
@@ -381,6 +659,163 @@
             <div class="stat reveal"><div class="num">100</div><div class="label">% 开源热情</div></div>
             <div class="stat reveal"><div class="num">0</div><div class="label"> Bug 遗留目标</div></div>
             <div class="stat reveal"><div class="num">🛠</div><div class="label">持续构建中</div></div>
+        </div>
+    </section>
+
+    <section id="tools">
+        <h2 class="sec-title reveal">实用工具箱</h2>
+        <p class="sec-sub reveal">天气 · 资讯 · 计算器，即开即用，数据保存在本机</p>
+
+        <div class="tool-tabs reveal" role="tablist">
+            <button class="tool-tab active" data-tool="weather">☀ 天气</button>
+            <button class="tool-tab" data-tool="news">📰 新闻</button>
+            <button class="tool-tab" data-tool="llm">🤖 大模型</button>
+            <button class="tool-tab" data-tool="calc">🚗 购车计算</button>
+            <button class="tool-tab" data-tool="upkeep">🛠 用车养车</button>
+            <button class="tool-tab" data-tool="expenses">🧾 花费清单</button>
+        </div>
+
+        <!-- 天气 -->
+        <div class="tool-panel active" id="tool-weather">
+            <h3>☀ 实时天气</h3>
+            <p class="panel-sub">数据来自 Open-Meteo · 洛阳</p>
+            <div id="wxCard"><div class="wx-loading">正在获取天气…</div></div>
+        </div>
+
+        <!-- 新闻 -->
+        <div class="tool-panel" id="tool-news">
+            <h3>📰 每日简报</h3>
+            <p class="panel-sub">每天 60 秒读懂世界</p>
+            <div class="news-date" id="newsDate">加载中…</div>
+            <div id="newsList"><div class="wx-loading">正在获取新闻…</div></div>
+        </div>
+
+        <!-- 大模型 -->
+        <div class="tool-panel" id="tool-llm">
+            <h3>🤖 主流大模型 · 每亿 Tokens 价格</h3>
+            <p class="panel-sub">按缓存输入率 98.3% 计算 · 单位：人民币 ¥</p>
+            <div class="llm-filter">
+                <button class="llm-tag active" data-vendor="all">全部</button>
+                <button class="llm-tag" data-vendor="openai">OpenAI</button>
+                <button class="llm-tag" data-vendor="claude">Claude</button>
+                <button class="llm-tag" data-vendor="deepseek">DeepSeek</button>
+                <button class="llm-tag" data-vendor="glm">GLM</button>
+                <button class="llm-tag" data-vendor="kimi">Kimi</button>
+            </div>
+            <div class="llm-wrap">
+                <table class="llm-table">
+                    <thead>
+                        <tr>
+                            <th>模型</th><th>厂商</th>
+                            <th>缓存输入 ¥/M</th><th>输入 ¥/M</th><th>输出 ¥/M</th>
+                            <th>API 每亿 ¥</th><th>套餐 每亿 ¥</th><th>套餐说明</th>
+                        </tr>
+                    </thead>
+                    <tbody id="llmTableBody"></tbody>
+                </table>
+            </div>
+            <div class="hint">API 价格按缓存输入率 98.3% 估算 · 套餐价格 = 套餐总价 ÷ 总量 · 来源：各厂商公开定价，仅供参考</div>
+            <div style="margin-top:22px;padding-top:16px;border-top:1px solid var(--border);">
+                <h3 style="font-size:0.95em;">💡 价格计算器</h3>
+                <div class="t-grid" style="margin-top:12px;">
+                    <div class="t-field"><label>缓存输入 ¥/M</label><input type="number" id="llmCalcCache" value="0.05" step="0.01" min="0"></div>
+                    <div class="t-field"><label>输入 ¥/M</label><input type="number" id="llmCalcInput" value="1.5" step="0.1" min="0"></div>
+                    <div class="t-field"><label>输出 ¥/M</label><input type="number" id="llmCalcOutput" value="4.5" step="0.1" min="0"></div>
+                    <div style="display:flex;align-items:center;justify-content:center;"><div class="llm-calc-result" id="llmCalcResult">¥ 10.22</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 购车计算 -->
+        <div class="tool-panel" id="tool-calc">
+            <h3>🚗 购车费用估算</h3>
+            <p class="panel-sub">估算购置税、保险与落地总价</p>
+            <div class="t-field">
+                <label>车辆裸车价（万元）</label>
+                <input type="number" id="carPrice" placeholder="例：15.98" min="0" step="0.01">
+            </div>
+            <div class="t-radio-group" id="carTypeGroup">
+                <label class="t-radio selected" data-type="fuel"><input type="radio" name="carType" value="fuel" checked>⛽ 燃油车</label>
+                <label class="t-radio" data-type="ev"><input type="radio" name="carType" value="ev">🔋 新能源</label>
+            </div>
+            <button class="t-btn" id="calcBtn">估算落地价</button>
+            <div class="t-result" id="calcResult">
+                <table>
+                    <tr><td class="label">裸车价</td><td class="value" id="rPrice"></td></tr>
+                    <tr><td class="label">购置税</td><td class="value" id="rTax"></td></tr>
+                    <tr><td class="label">保险费</td><td class="value" id="rIns"></td></tr>
+                    <tr><td class="label">杂项费用</td><td class="value" id="rMisc"></td></tr>
+                    <tr class="total"><td class="label">落地价总计</td><td class="value" id="rTotal"></td></tr>
+                </table>
+            </div>
+            <div class="hint">* 仅供参考，实际费用以经销商报价为准</div>
+        </div>
+
+        <!-- 用车养车 -->
+        <div class="tool-panel" id="tool-upkeep">
+            <h3>🛠 用车养车 · 全流程费用</h3>
+            <p class="panel-sub">输入各项，自动算出月均与年均用车成本</p>
+            <div class="t-radio-group" id="upEnergyGroup">
+                <label class="t-radio selected" data-type="fuel"><input type="radio" name="upEnergy" value="fuel" checked>⛽ 燃油</label>
+                <label class="t-radio" data-type="ev"><input type="radio" name="upEnergy" value="ev">🔋 纯电</label>
+                <label class="t-radio" data-type="hybrid"><input type="radio" name="upEnergy" value="hybrid">⚡ 混动</label>
+            </div>
+            <div id="upFuelFields">
+                <div class="t-grid">
+                    <div class="t-field"><label>油价（元/升）</label><input type="number" id="upFuelPrice" placeholder="例：7.8" min="0" step="0.01"></div>
+                    <div class="t-field"><label>百公里油耗（升）</label><input type="number" id="upFuelCons" placeholder="例：7.5" min="0" step="0.1"></div>
+                </div>
+            </div>
+            <div id="upEvFields" style="display:none">
+                <div class="t-grid">
+                    <div class="t-field"><label>电价（元/度）</label><input type="number" id="upElecPrice" placeholder="例：0.6" min="0" step="0.01"></div>
+                    <div class="t-field"><label>百公里电耗（度）</label><input type="number" id="upElecCons" placeholder="例：14" min="0" step="0.1"></div>
+                </div>
+            </div>
+            <div id="upHybridFields" style="display:none">
+                <div class="t-grid">
+                    <div class="t-field"><label>油价（元/升）</label><input type="number" id="hyFuelPrice" placeholder="例：7.8" min="0" step="0.01"></div>
+                    <div class="t-field"><label>亏电油耗（升/100km）</label><input type="number" id="hyFuelCons" placeholder="例：5.5" min="0" step="0.1"></div>
+                    <div class="t-field"><label>电价（元/度）</label><input type="number" id="hyElecPrice" placeholder="例：0.6" min="0" step="0.01"></div>
+                    <div class="t-field"><label>电耗（度/100km）</label><input type="number" id="hyElecCons" placeholder="例：10" min="0" step="0.1"></div>
+                </div>
+            </div>
+            <div class="t-grid">
+                <div class="t-field"><label>年行驶里程（公里）</label><input type="number" id="upMileage" placeholder="例：15000" min="0" step="100"></div>
+                <div class="t-field"><label>保险费（元/年）</label><input type="number" id="upInsurance" placeholder="例：4000" min="0"></div>
+                <div class="t-field"><label>保养费（元/年）</label><input type="number" id="upMaint" placeholder="例：1200" min="0"></div>
+                <div class="t-field"><label>停车费（元/月）</label><input type="number" id="upParking" placeholder="例：300" min="0"></div>
+                <div class="t-field"><label>洗车美容（元/年）</label><input type="number" id="upWash" placeholder="例：600" min="0"></div>
+                <div class="t-field"><label>过路费（元/年）</label><input type="number" id="upToll" placeholder="例：2000" min="0"></div>
+                <div class="t-field"><label>违章罚款（元/年）</label><input type="number" id="upFine" placeholder="例：0" min="0"></div>
+                <div class="t-field"><label>其他杂费（元/年，可填算式）</label><input type="text" id="upOther" placeholder="例：300+200"></div>
+            </div>
+            <button class="t-btn" id="upCalcBtn">计算用车成本</button>
+            <div class="t-result" id="upResult">
+                <table>
+                    <tr><td class="label">能源费</td><td class="value" id="urEnergy"></td></tr>
+                    <tr><td class="label">保险费</td><td class="value" id="urIns"></td></tr>
+                    <tr><td class="label">保养费</td><td class="value" id="urMaint"></td></tr>
+                    <tr><td class="label">停车费</td><td class="value" id="urPark"></td></tr>
+                    <tr><td class="label">洗车美容</td><td class="value" id="urWash"></td></tr>
+                    <tr><td class="label">过路费</td><td class="value" id="urToll"></td></tr>
+                    <tr><td class="label">罚款及其他</td><td class="value" id="urMisc"></td></tr>
+                    <tr class="total"><td class="label">年总计</td><td class="value" id="urTotal"></td></tr>
+                    <tr class="total"><td class="label">月均</td><td class="value" id="urAvg"></td></tr>
+                </table>
+            </div>
+            <div class="hint">* 输入自动保存到本机浏览器，下次打开自动恢复</div>
+        </div>
+
+        <!-- 花费清单 -->
+        <div class="tool-panel" id="tool-expenses">
+            <h3>🧾 花费清单计算器</h3>
+            <p class="panel-sub">逐项输入名称和金额，自动合计并保存</p>
+            <div id="expList"></div>
+            <button class="t-btn" id="expAddBtn">＋ 添加一项</button>
+            <div class="exp-total"><span>合计</span><span id="expTotal">¥0.00</span></div>
+            <button class="t-btn danger" id="expClearBtn">清空全部</button>
+            <div class="hint">* 清单自动保存到本机浏览器，下次打开自动恢复</div>
         </div>
     </section>
 
@@ -463,7 +898,337 @@
     tick();
 })();
 
-// ===== 滚动渐入 =====
+// ===== 工具箱：标签切换 =====
+(function () {
+    document.querySelectorAll('.tool-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tool-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tool-' + btn.dataset.tool).classList.add('active');
+        });
+    });
+})();
+
+// ===== 工具箱：单选胶囊组 =====
+function bindRadioGroup(groupId, onChange) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.t-radio').forEach(lbl => {
+        lbl.addEventListener('click', () => {
+            group.querySelectorAll('.t-radio').forEach(l => l.classList.remove('selected'));
+            lbl.classList.add('selected');
+            lbl.querySelector('input').checked = true;
+            if (onChange) onChange(lbl.dataset.type);
+        });
+    });
+}
+
+// ===== 工具箱：通用函数 =====
+function num(id) { const v = parseFloat(document.getElementById(id).value); return isFinite(v) && v > 0 ? v : 0; }
+function fmt(n) { return '¥' + Math.round(n).toLocaleString('zh-CN'); }
+function evalExpr(s) {
+    s = String(s || '').replace(/（/g, '(').replace(/）/g, ')').replace(/×/g, '*').replace(/÷/g, '/');
+    if (!/^[\d+\-*/.()\s]+$/.test(s)) return NaN;
+    try { const v = Function('"use strict";return(' + s + ')')(); return typeof v === 'number' && isFinite(v) ? v : NaN; } catch (e) { return NaN; }
+}
+
+// ===== 购车计算器 =====
+(function () {
+    function doCalc() {
+        const priceWan = parseFloat(document.getElementById('carPrice').value);
+        const isEv = document.querySelector('input[name="carType"]:checked').value === 'ev';
+        const el = document.getElementById('calcResult');
+        if (!priceWan || priceWan <= 0) { el.classList.remove('show'); return; }
+        const price = priceWan * 10000;
+        let tax = price * (1 / 1.13 * 0.1);
+        let ins, misc;
+        if (isEv) { ins = 6000; tax = tax / 2; misc = 1000; }
+        else { ins = 5500; misc = 1000; }
+        const total = price + tax + ins + misc;
+        document.getElementById('rPrice').textContent = fmt(price);
+        document.getElementById('rTax').textContent = fmt(tax);
+        document.getElementById('rIns').textContent = fmt(ins);
+        document.getElementById('rMisc').textContent = fmt(misc);
+        document.getElementById('rTotal').textContent = fmt(total);
+        el.classList.add('show');
+    }
+    document.getElementById('calcBtn').addEventListener('click', doCalc);
+    document.getElementById('carPrice').addEventListener('keydown', e => { if (e.key === 'Enter') doCalc(); });
+    bindRadioGroup('carTypeGroup', () => {
+        if (document.getElementById('calcResult').classList.contains('show')) doCalc();
+    });
+})();
+
+// ===== 用车养车计算器 =====
+(function () {
+    const UP_FIELDS = ['upFuelPrice', 'upFuelCons', 'upElecPrice', 'upElecCons', 'hyFuelPrice', 'hyFuelCons', 'hyElecPrice', 'hyElecCons', 'upMileage', 'upInsurance', 'upMaint', 'upParking', 'upWash', 'upToll', 'upFine', 'upOther'];
+    const LS_KEY = 'ayadododo_upkeep_v1';
+
+    function energyType() {
+        const el = document.querySelector('input[name="upEnergy"]:checked');
+        return el ? el.value : 'fuel';
+    }
+    function setEnergyView(t) {
+        document.getElementById('upFuelFields').style.display = t === 'fuel' ? '' : 'none';
+        document.getElementById('upEvFields').style.display = t === 'ev' ? '' : 'none';
+        document.getElementById('upHybridFields').style.display = t === 'hybrid' ? '' : 'none';
+    }
+    function save() {
+        const d = { t: energyType(), v: {} };
+        UP_FIELDS.forEach(id => { d.v[id] = document.getElementById(id).value; });
+        try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch (e) {}
+    }
+    function restore() {
+        let d = null;
+        try { d = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch (e) {}
+        if (!d) return;
+        if (d.t) {
+            const lbl = document.querySelector('#upEnergyGroup .t-radio[data-type="' + d.t + '"]');
+            if (lbl) {
+                document.querySelectorAll('#upEnergyGroup .t-radio').forEach(l => l.classList.remove('selected'));
+                lbl.classList.add('selected');
+                lbl.querySelector('input').checked = true;
+            }
+        }
+        setEnergyView(energyType());
+        UP_FIELDS.forEach(id => { if (d.v && typeof d.v[id] === 'string') document.getElementById(id).value = d.v[id]; });
+    }
+    function doUpkeep() {
+        const t = energyType();
+        const mileage = num('upMileage');
+        const el = document.getElementById('upResult');
+        if (mileage <= 0) { el.classList.remove('show'); return; }
+        let energy = 0;
+        if (t === 'fuel') energy = mileage / 100 * num('upFuelCons') * num('upFuelPrice');
+        else if (t === 'ev') energy = mileage / 100 * num('upElecCons') * num('upElecPrice');
+        else energy = mileage / 100 * (num('hyFuelCons') * num('hyFuelPrice') + num('hyElecCons') * num('hyElecPrice'));
+        const ins = num('upInsurance'), maint = num('upMaint'), park = num('upParking') * 12;
+        const wash = num('upWash'), toll = num('upToll'), fine = num('upFine');
+        let other = evalExpr(document.getElementById('upOther').value);
+        if (!isFinite(other)) other = 0;
+        const misc = fine + other;
+        const total = energy + ins + maint + park + wash + toll + misc;
+        document.getElementById('urEnergy').textContent = fmt(energy);
+        document.getElementById('urIns').textContent = fmt(ins);
+        document.getElementById('urMaint').textContent = fmt(maint);
+        document.getElementById('urPark').textContent = fmt(park);
+        document.getElementById('urWash').textContent = fmt(wash);
+        document.getElementById('urToll').textContent = fmt(toll);
+        document.getElementById('urMisc').textContent = fmt(misc);
+        document.getElementById('urTotal').textContent = fmt(total);
+        document.getElementById('urAvg').textContent = fmt(total / 12) + '/月';
+        el.classList.add('show');
+    }
+    bindRadioGroup('upEnergyGroup', t => { setEnergyView(t); save(); if (document.getElementById('upResult').classList.contains('show')) doUpkeep(); });
+    document.getElementById('upCalcBtn').addEventListener('click', () => { save(); doUpkeep(); });
+    UP_FIELDS.forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            save();
+            if (document.getElementById('upResult').classList.contains('show')) doUpkeep();
+        });
+    });
+    restore();
+})();
+
+// ===== 花费清单 =====
+(function () {
+    const LS_KEY = 'ayadododo_expenses_v1';
+    let items = [];
+
+    function total() {
+        let t = 0;
+        for (const it of items) { const a = parseFloat(it.amt); if (isFinite(a)) t += a; }
+        return t;
+    }
+    function renderTotal() {
+        document.getElementById('expTotal').textContent = '¥' + total().toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    function render() {
+        const list = document.getElementById('expList');
+        if (!items.length) {
+            list.innerHTML = '<div class="exp-empty">暂无条目，点击下方添加</div>';
+        } else {
+            list.innerHTML = items.map((it, i) =>
+                '<div class="exp-row">' +
+                '<input type="text" class="exp-name" data-i="' + i + '" value="' + String(it.name).replace(/"/g, '&quot;') + '" placeholder="项目名称">' +
+                '<input type="number" class="exp-amt" data-i="' + i + '" value="' + (it.amt === '' ? '' : it.amt) + '" placeholder="0.00" min="0" step="0.01">' +
+                '<button class="exp-del" data-i="' + i + '" title="删除">✕</button>' +
+                '</div>'
+            ).join('');
+        }
+        renderTotal();
+    }
+    function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(items)); } catch (e) {} }
+
+    document.getElementById('expAddBtn').addEventListener('click', () => {
+        items.push({ name: '', amt: '' });
+        render();
+        const inputs = document.querySelectorAll('#expList .exp-name');
+        if (inputs.length) inputs[inputs.length - 1].focus();
+    });
+    document.getElementById('expList').addEventListener('input', e => {
+        const i = e.target.getAttribute('data-i');
+        if (i === null) return;
+        const idx = parseInt(i, 10);
+        if (e.target.classList.contains('exp-name')) items[idx].name = e.target.value;
+        if (e.target.classList.contains('exp-amt')) items[idx].amt = e.target.value;
+        save();
+        renderTotal();
+    });
+    document.getElementById('expList').addEventListener('click', e => {
+        if (!e.target.classList.contains('exp-del')) return;
+        items.splice(parseInt(e.target.getAttribute('data-i'), 10), 1);
+        save();
+        render();
+    });
+    document.getElementById('expClearBtn').addEventListener('click', () => {
+        if (!items.length) return;
+        if (confirm('确定清空全部条目？')) { items = []; save(); render(); }
+    });
+
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch (e) {}
+    if (Array.isArray(saved)) {
+        items = saved.filter(x => x && typeof x === 'object').map(x => ({ name: String(x.name || ''), amt: x.amt == null ? '' : String(x.amt) }));
+    }
+    if (!items.length) items.push({ name: '', amt: '' });
+    render();
+})();
+
+// ===== 大模型价格 =====
+(function () {
+    const LLM_DATA = [
+        { name: 'Claude Fable 5.1', vendor: 'claude', cache: 1.75, input: 70, output: 350, pkg: null },
+        { name: 'Claude Opus 5.0', vendor: 'claude', cache: 3.5, input: 35, output: 175, pkg: { price: 144, tokens: 600000000, label: 'Pro' } },
+        { name: 'Claude Fable 5.0', vendor: 'claude', cache: 7, input: 70, output: 350, pkg: null },
+        { name: 'GPT-5.6 Sol', vendor: 'openai', cache: 1.4, input: 14, output: 70, pkg: { price: 140, tokens: 600000000, label: 'Plus' } },
+        { name: 'GPT-5.6 Terra', vendor: 'openai', cache: 1.4, input: 14, output: 70, pkg: { price: 140, tokens: 1200000000, label: 'Plus' } },
+        { name: 'GPT-5.6 Luna', vendor: 'openai', cache: 0.14, input: 1.4, output: 8.4, pkg: { price: 140, tokens: 3500000000, label: 'Plus' } },
+        { name: 'Kimi-K3', vendor: 'kimi', cache: 2, input: 20, output: 100, pkg: { price: 49, tokens: 150000000, label: 'Andante' } },
+        { name: 'Kimi-K3', vendor: 'kimi', cache: 2, input: 20, output: 100, pkg: { price: 99, tokens: 450000000, label: 'Moderato' } },
+        { name: 'Kimi-K3', vendor: 'kimi', cache: 2, input: 20, output: 100, pkg: { price: 199, tokens: 700000000, label: 'Allegretto' } },
+        { name: 'Kimi-K3', vendor: 'kimi', cache: 2, input: 20, output: 100, pkg: { price: 699, tokens: 2400000000, label: 'Allegro' } },
+        { name: 'GLM-5.3', vendor: 'glm', cache: 2, input: 8, output: 28, pkg: { price: 118, tokens: 450000000, label: 'Lite' } },
+        { name: 'GLM-5.3-Flash', vendor: 'glm', cache: 0.115, input: 0.4, output: 1.4, pkg: { price: 118, tokens: 1200000000, label: 'Lite' } },
+        { name: 'DeepSeek-V4-Pro (谷时)', vendor: 'deepseek', cache: 0.15, input: 4.5, output: 13.5, pkg: null },
+        { name: 'DeepSeek-V4-Pro (峰时)', vendor: 'deepseek', cache: 0.3, input: 9, output: 27, pkg: null },
+        { name: 'DeepSeek-V4-Flash (谷时)', vendor: 'deepseek', cache: 0.05, input: 1.5, output: 4.5, pkg: null },
+        { name: 'DeepSeek-V4-Flash (峰时)', vendor: 'deepseek', cache: 0.1, input: 3, output: 9, pkg: null },
+        { name: 'Claude Opus 4.8', vendor: 'claude', cache: 1.4, input: 14, output: 140, pkg: { price: 140, tokens: 800000000, label: 'Pro' } }
+    ];
+    function apiCost(m) { return (98.3 * m.cache + 1.7 * m.input) / 100 * 100000000 / 1000000; }
+    function pkgCost(m) { return m.pkg.price / (m.pkg.tokens / 100000000); }
+    function renderTable(vendor) {
+        const filtered = vendor === 'all' ? LLM_DATA : LLM_DATA.filter(m => m.vendor === vendor);
+        document.getElementById('llmTableBody').innerHTML = filtered.map(m => {
+            const pkgCostV = m.pkg ? pkgCost(m) : null;
+            return '<tr>' +
+                '<td>' + m.name + '</td>' +
+                '<td>' + m.vendor + '</td>' +
+                '<td>¥' + m.cache + '</td>' +
+                '<td>¥' + m.input + '</td>' +
+                '<td>¥' + m.output + '</td>' +
+                '<td class="cost">¥' + apiCost(m).toFixed(2) + '</td>' +
+                (pkgCostV !== null
+                    ? '<td class="cost">¥' + pkgCostV.toFixed(2) + '</td><td style="color:var(--text-dim)">' + (m.pkg.label ? m.pkg.label + ' · ' : '') + m.pkg.price + '元/' + (m.pkg.tokens / 100000000) + '亿</td>'
+                    : '<td style="color:var(--text-dim)">—</td><td></td>') +
+                '</tr>';
+        }).join('');
+    }
+    document.querySelectorAll('.llm-tag').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.llm-tag').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderTable(btn.dataset.vendor);
+        });
+    });
+    function updateCalc() {
+        const c = parseFloat(document.getElementById('llmCalcCache').value) || 0;
+        const inp = parseFloat(document.getElementById('llmCalcInput').value) || 0;
+        const out = parseFloat(document.getElementById('llmCalcOutput').value) || 0;
+        document.getElementById('llmCalcResult').textContent = '¥ ' + ((98.3 * c + 1.7 * inp) / 100 * 100000000 / 1000000).toFixed(2);
+    }
+    ['llmCalcCache', 'llmCalcInput', 'llmCalcOutput'].forEach(id => document.getElementById(id).addEventListener('input', updateCalc));
+    renderTable('all');
+})();
+
+// ===== 天气 =====
+(function () {
+    const WMO = {
+        0: ['☀', '晴'], 1: ['🌤', '大部晴'], 2: ['⛅', '多云'], 3: ['☁', '阴'],
+        45: ['🌫', '雾'], 48: ['🌫', '雾凇'], 51: ['🌦', '小毛毛雨'], 53: ['🌦', '毛毛雨'],
+        55: ['🌧', '大毛毛雨'], 56: ['🌧', '冻毛毛雨'], 57: ['🌧', '冻毛毛雨'],
+        61: ['🌦', '小雨'], 63: ['🌧', '中雨'], 65: ['🌧', '大雨'],
+        66: ['🌧', '冻雨'], 67: ['🌧', '冻雨'], 71: ['🌨', '小雪'],
+        73: ['🌨', '中雪'], 75: ['❄', '大雪'], 77: ['❄', '雪粒'],
+        80: ['🌦', '阵雨'], 81: ['🌧', '中阵雨'], 82: ['🌧', '大阵雨'],
+        85: ['🌨', '小阵雪'], 86: ['❄', '大阵雪'], 95: ['⛈', '雷暴'],
+        96: ['⛈', '雷暴+冰雹'], 99: ['⛈', '雷暴+大冰雹']
+    };
+    const DIR = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
+    const info = code => WMO[code] || ['🌡', '未知'];
+    const windDir = d => DIR[Math.round(d / 45) % 8] || '北';
+
+    (async function () {
+        const card = document.getElementById('wxCard');
+        try {
+            const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=34.618&longitude=112.46&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,sunrise,sunset&timezone=auto&forecast_days=3');
+            const d = await r.json();
+            const cur = d.current, day = d.daily;
+            const w = info(cur.weather_code);
+            const sr = day.sunrise ? new Date(day.sunrise[0]).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) : '';
+            const ss = day.sunset ? new Date(day.sunset[0]).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) : '';
+            let h = '<div class="wx-now"><div>' +
+                '<div class="wx-temp">' + Math.round(cur.temperature_2m) + '°C</div>' +
+                '<div class="wx-desc">' + w[0] + ' ' + w[1] + ' · 洛阳</div></div>' +
+                '<div class="wx-meta"><span>体感 ' + Math.round(cur.apparent_temperature) + '°C</span>' +
+                '<span>' + cur.relative_humidity_2m + '% 湿度</span>' +
+                '<span>' + windDir(cur.wind_direction_10m) + '风 ' + Math.round(cur.wind_speed_10m) + 'km/h</span></div></div>' +
+                (sr && ss ? '<div class="wx-row"><span class="dim">日出 ' + sr + '</span><span class="dim">日落 ' + ss + '</span></div>' : '');
+            for (let i = 0; i < 3; i++) {
+                const w2 = info(day.weather_code[i]);
+                const ds = new Date(day.time[i]).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', weekday: 'short' });
+                h += '<div class="wx-row"><span>' + ds + '</span><span>' + w2[0] + ' ' + w2[1] + '</span>' +
+                    '<span>' + Math.round(day.temperature_2m_max[i]) + '° / ' + Math.round(day.temperature_2m_min[i]) + '°C</span>' +
+                    (day.precipitation_probability_max[i] > 0 ? '<span class="dim">💧' + day.precipitation_probability_max[i] + '%</span>' : '<span></span>') + '</div>';
+            }
+            card.innerHTML = h;
+        } catch (e) {
+            card.innerHTML = '<div class="wx-loading">☕ 天气加载失败，稍后再试</div>';
+        }
+    })();
+})();
+
+// ===== 每日简报 =====
+(function () {
+    (async function () {
+        const el = document.getElementById('newsList');
+        const dt = document.getElementById('newsDate');
+        try {
+            const r = await fetch('https://60s.viki.moe/v2/60s?encoding=text');
+            if (!r.ok) throw new Error();
+            const t = await r.text();
+            const lines = t.trim().split('\n');
+            if (lines.length < 2) throw new Error();
+            dt.textContent = lines[0].trim();
+            let html = '', weiyu = '';
+            const items = lines.slice(1);
+            for (let i = 0; i < items.length; i++) {
+                const ln = items[i].trim();
+                if (!ln) continue;
+                if (ln.startsWith('【微语】') || ln.startsWith('微语')) { weiyu = ln.replace(/^【微语】|^微语/, '').trim(); break; }
+                html += '<div class="news-item"><span class="news-idx">' + (i + 1) + '</span><span>' + ln + '</span></div>';
+            }
+            if (weiyu) {
+                html += '<div class="news-item"><span class="news-idx">💬</span><span style="color:var(--text-dim);font-style:italic;">' + weiyu + '</span></div>';
+            }
+            el.innerHTML = html || '<div class="wx-loading">☕ 今日消息暂未更新</div>';
+        } catch (e) {
+            document.getElementById('newsDate').textContent = '';
+            document.getElementById('newsList').innerHTML = '<div class="wx-loading">☕ 新闻加载失败，稍后再看</div>';
+        }
+    })();
+})();
 (function () {
     if (!('IntersectionObserver' in window)) return;
     document.documentElement.classList.add('motion-ready');
