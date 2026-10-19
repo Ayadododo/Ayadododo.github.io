@@ -511,15 +511,6 @@
             transition: all 0.2s;
         }
         .llm-tag.active { border-color: var(--accent); color: var(--accent); background: rgba(108, 140, 255, 0.1); }
-        .llm-calc-result {
-            text-align: center;
-            font-size: 1.8em;
-            font-weight: 800;
-            background: linear-gradient(90deg, var(--accent), var(--accent3));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
 
         /* 花费清单 */
         .exp-row {
@@ -692,8 +683,8 @@
 
         <!-- 大模型 -->
         <div class="tool-panel" id="tool-llm">
-            <h3>🤖 主流大模型 · 每亿 Tokens 价格</h3>
-            <p class="panel-sub">按缓存输入率 98.3% 计算 · 单位：人民币 ¥</p>
+            <h3>🤖 主流大模型 · AA 智能指数排行</h3>
+            <p class="panel-sub">按 Artificial Analysis 智能指数排序 · 数据采集于 2026-10-19</p>
             <div class="llm-filter">
                 <button class="llm-tag active" data-vendor="all">全部</button>
                 <button class="llm-tag" data-vendor="openai">OpenAI</button>
@@ -706,24 +697,14 @@
                 <table class="llm-table">
                     <thead>
                         <tr>
-                            <th>模型</th><th>厂商</th>
-                            <th>缓存输入 ¥/M</th><th>输入 ¥/M</th><th>输出 ¥/M</th>
-                            <th>API 每亿 ¥</th><th>套餐 每亿 ¥</th><th>套餐说明</th>
+                            <th>排名</th><th>模型</th><th>厂商</th>
+                            <th>AA 智能指数</th><th>AA 同类排名</th>
                         </tr>
                     </thead>
                     <tbody id="llmTableBody"></tbody>
                 </table>
             </div>
-            <div class="hint">API 价格按缓存输入率 98.3% 估算 · 套餐价格 = 套餐总价 ÷ 总量 · 来源：各厂商公开定价，仅供参考</div>
-            <div style="margin-top:22px;padding-top:16px;border-top:1px solid var(--border);">
-                <h3 style="font-size:0.95em;">💡 价格计算器</h3>
-                <div class="t-grid" style="margin-top:12px;">
-                    <div class="t-field"><label>缓存输入 ¥/M</label><input type="number" id="llmCalcCache" value="0.05" step="0.01" min="0"></div>
-                    <div class="t-field"><label>输入 ¥/M</label><input type="number" id="llmCalcInput" value="1.5" step="0.1" min="0"></div>
-                    <div class="t-field"><label>输出 ¥/M</label><input type="number" id="llmCalcOutput" value="4.5" step="0.1" min="0"></div>
-                    <div style="display:flex;align-items:center;justify-content:center;"><div class="llm-calc-result" id="llmCalcResult">¥ 10.22</div></div>
-                </div>
-            </div>
+            <div class="hint">按 AA（Artificial Analysis）智能指数由高到低排序 · 「AA 同类排名」为该模型在 AA 同价位 / 同规模比较组中的名次 · 点击模型名可跳转 AA 详情页 · 仅供参考</div>
         </div>
 
         <!-- 购车计算 -->
@@ -1095,45 +1076,36 @@ function evalExpr(s) {
     render();
 })();
 
-// ===== 大模型价格 =====
+// ===== 大模型 AA 排行 =====
 (function () {
-    const LLM_DATA = [
-        { name: 'Claude Fable 5.1', vendor: 'claude', cache: 1.75, input: 70, output: 350, pkg: null },
-        { name: 'Claude Opus 5.0', vendor: 'claude', cache: 3.5, input: 35, output: 175, pkg: { price: 144, tokens: 600000000, label: 'Pro' } },
-        { name: 'Claude Fable 5.0', vendor: 'claude', cache: 7, input: 70, output: 350, pkg: null },
-        { name: 'GPT-5.6 Sol', vendor: 'openai', cache: 1.4, input: 14, output: 70, pkg: { price: 140, tokens: 600000000, label: 'Plus' } },
-        { name: 'GPT-5.6 Terra', vendor: 'openai', cache: 1.4, input: 14, output: 70, pkg: { price: 140, tokens: 1200000000, label: 'Plus' } },
-        { name: 'GPT-5.6 Luna', vendor: 'openai', cache: 0.14, input: 1.4, output: 8.4, pkg: { price: 140, tokens: 3500000000, label: 'Plus' } },
-        { name: 'Kimi-K3', vendor: 'kimi', cache: 2, input: 20, output: 100, pkg: { price: 49, tokens: 150000000, label: 'Andante' } },
-        { name: 'Kimi-K3', vendor: 'kimi', cache: 2, input: 20, output: 100, pkg: { price: 99, tokens: 450000000, label: 'Moderato' } },
-        { name: 'Kimi-K3', vendor: 'kimi', cache: 2, input: 20, output: 100, pkg: { price: 199, tokens: 700000000, label: 'Allegretto' } },
-        { name: 'Kimi-K3', vendor: 'kimi', cache: 2, input: 20, output: 100, pkg: { price: 699, tokens: 2400000000, label: 'Allegro' } },
-        { name: 'GLM-5.3', vendor: 'glm', cache: 2, input: 8, output: 28, pkg: { price: 118, tokens: 450000000, label: 'Lite' } },
-        { name: 'GLM-5.3-Flash', vendor: 'glm', cache: 0.115, input: 0.4, output: 1.4, pkg: { price: 118, tokens: 1200000000, label: 'Lite' } },
-        { name: 'DeepSeek-V4-Pro (谷时)', vendor: 'deepseek', cache: 0.15, input: 4.5, output: 13.5, pkg: null },
-        { name: 'DeepSeek-V4-Pro (峰时)', vendor: 'deepseek', cache: 0.3, input: 9, output: 27, pkg: null },
-        { name: 'DeepSeek-V4-Flash (谷时)', vendor: 'deepseek', cache: 0.05, input: 1.5, output: 4.5, pkg: null },
-        { name: 'DeepSeek-V4-Flash (峰时)', vendor: 'deepseek', cache: 0.1, input: 3, output: 9, pkg: null },
-        { name: 'Claude Opus 4.8', vendor: 'claude', cache: 1.4, input: 14, output: 140, pkg: { price: 140, tokens: 800000000, label: 'Pro' } }
+    const AA_URL = 'https://artificialanalysis.ai/models/';
+    // 排名按 AA 智能指数降序（同分按 AA 名次），数据采集于 2026-10-19
+    const LLM_RANK = [
+        { name: 'Claude Fable 5.1', vendor: 'claude', score: 53, rank: 5, total: 217, slug: 'claude-fable-5-1' },
+        { name: 'Claude Opus 5.0', vendor: 'claude', score: 51, rank: 17, total: 217, slug: 'claude-opus-5' },
+        { name: 'Claude Fable 5.0', vendor: 'claude', score: 50, rank: 20, total: 217, slug: 'claude-fable-5' },
+        { name: 'GPT-5.6 Sol', vendor: 'openai', score: 47, rank: 27, total: 217, slug: 'gpt-5-6-sol' },
+        { name: 'GLM-5.3', vendor: 'glm', score: 45, rank: 2, total: 120, slug: 'glm-5-3' },
+        { name: 'Kimi-K3', vendor: 'kimi', score: 44, rank: 4, total: 120, slug: 'kimi-k3' },
+        { name: 'GLM-5.3-Flash', vendor: 'glm', score: 42, rank: 5, total: 120, slug: 'glm-5-3-flash' },
+        { name: 'GPT-5.6 Terra', vendor: 'openai', score: 42, rank: 49, total: 217, slug: 'gpt-5-6-terra' },
+        { name: 'Claude Opus 4.8', vendor: 'claude', score: 42, rank: 50, total: 217, slug: 'claude-opus-4-8' },
+        { name: 'GPT-5.6 Luna', vendor: 'openai', score: 37, rank: 11, total: 171, slug: 'gpt-5-6-luna' },
+        { name: 'DeepSeek-V4-Pro', vendor: 'deepseek', score: 36, rank: 12, total: 120, slug: 'deepseek-v4-pro' },
+        { name: 'DeepSeek-V4-Flash', vendor: 'deepseek', score: 34, rank: 13, total: 120, slug: 'deepseek-v4-flash' }
     ];
-    function apiCost(m) { return (98.3 * m.cache + 1.7 * m.input) / 100 * 100000000 / 1000000; }
-    function pkgCost(m) { return m.pkg.price / (m.pkg.tokens / 100000000); }
+    const VENDOR_NAME = { claude: 'Anthropic', openai: 'OpenAI', glm: 'Z AI', kimi: 'Kimi', deepseek: 'DeepSeek' };
     function renderTable(vendor) {
-        const filtered = vendor === 'all' ? LLM_DATA : LLM_DATA.filter(m => m.vendor === vendor);
-        document.getElementById('llmTableBody').innerHTML = filtered.map(m => {
-            const pkgCostV = m.pkg ? pkgCost(m) : null;
-            return '<tr>' +
-                '<td>' + m.name + '</td>' +
-                '<td>' + m.vendor + '</td>' +
-                '<td>¥' + m.cache + '</td>' +
-                '<td>¥' + m.input + '</td>' +
-                '<td>¥' + m.output + '</td>' +
-                '<td class="cost">¥' + apiCost(m).toFixed(2) + '</td>' +
-                (pkgCostV !== null
-                    ? '<td class="cost">¥' + pkgCostV.toFixed(2) + '</td><td style="color:var(--text-dim)">' + (m.pkg.label ? m.pkg.label + ' · ' : '') + m.pkg.price + '元/' + (m.pkg.tokens / 100000000) + '亿</td>'
-                    : '<td style="color:var(--text-dim)">—</td><td></td>') +
-                '</tr>';
-        }).join('');
+        const filtered = vendor === 'all' ? LLM_RANK : LLM_RANK.filter(m => m.vendor === vendor);
+        document.getElementById('llmTableBody').innerHTML = filtered.map(m =>
+            '<tr>' +
+            '<td>#' + (LLM_RANK.indexOf(m) + 1) + '</td>' +
+            '<td><a href="' + AA_URL + m.slug + '" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;border-bottom:1px dashed var(--border);">' + m.name + ' ↗</a></td>' +
+            '<td style="color:var(--text-dim)">' + VENDOR_NAME[m.vendor] + '</td>' +
+            '<td class="cost">' + m.score + '</td>' +
+            '<td>#' + m.rank + ' / ' + m.total + '</td>' +
+            '</tr>'
+        ).join('');
     }
     document.querySelectorAll('.llm-tag').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1142,13 +1114,6 @@ function evalExpr(s) {
             renderTable(btn.dataset.vendor);
         });
     });
-    function updateCalc() {
-        const c = parseFloat(document.getElementById('llmCalcCache').value) || 0;
-        const inp = parseFloat(document.getElementById('llmCalcInput').value) || 0;
-        const out = parseFloat(document.getElementById('llmCalcOutput').value) || 0;
-        document.getElementById('llmCalcResult').textContent = '¥ ' + ((98.3 * c + 1.7 * inp) / 100 * 100000000 / 1000000).toFixed(2);
-    }
-    ['llmCalcCache', 'llmCalcInput', 'llmCalcOutput'].forEach(id => document.getElementById(id).addEventListener('input', updateCalc));
     renderTable('all');
 })();
 
