@@ -655,12 +655,13 @@
 
     <section id="tools">
         <h2 class="sec-title reveal">实用工具箱</h2>
-        <p class="sec-sub reveal">天气 · 资讯 · 计算器，即开即用，数据保存在本机</p>
+        <p class="sec-sub reveal">天气 · 资讯 · 热榜 · 计算器，即开即用，数据保存在本机</p>
 
         <div class="tool-tabs reveal" role="tablist">
             <button class="tool-tab active" data-tool="weather">☀ 天气</button>
             <button class="tool-tab" data-tool="news">📰 新闻</button>
             <button class="tool-tab" data-tool="llm">🤖 大模型</button>
+            <button class="tool-tab" data-tool="zhihu">🔥 知乎热榜</button>
             <button class="tool-tab" data-tool="calc">🚗 购车计算</button>
             <button class="tool-tab" data-tool="upkeep">🛠 用车养车</button>
             <button class="tool-tab" data-tool="expenses">🧾 花费清单</button>
@@ -710,6 +711,15 @@
                 </table>
             </div>
             <div class="hint">各家旗舰机型按 AA（Artificial Analysis）智能指数由高到低排序 · 「AA 同类排名」为该模型在 AA 比较组中的名次 · 点击模型名可跳转 AA 详情页 · 数据采集于 2026-10-19，仅供参考</div>
+        </div>
+
+        <!-- 知乎热榜 -->
+        <div class="tool-panel" id="tool-zhihu">
+            <h3>🔥 知乎热榜</h3>
+            <p class="panel-sub" id="zhMeta">实时拉取 · 主源每日 6:00 / 18:00 更新，备用源每小时更新</p>
+            <div id="zhList"><div class="wx-loading">正在获取热榜…</div></div>
+            <button class="t-btn" id="zhRefresh" style="margin-top:16px;">⟳ 刷新热榜</button>
+            <div class="hint">数据来自社区镜像（h2dcc/zhihu-hotlist，问题直达知乎）· 本页不使用知乎官方密钥 · 点击条目打开知乎</div>
         </div>
 
         <!-- 购车计算 -->
@@ -1120,6 +1130,117 @@ function evalExpr(s) {
         });
     });
     renderTable('all');
+})();
+
+// ===== 知乎热榜 =====
+(function () {
+    const GH_API = 'https://api.github.com/repos/';
+    const JSD = 'https://cdn.jsdmirror.com/gh/';
+    const RAW = 'https://raw.githubusercontent.com/';
+    const listEl = document.getElementById('zhList');
+    const metaEl = document.getElementById('zhMeta');
+    let loading = false;
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    function dateStr(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+    function dateList() {
+        const now = new Date();
+        const yesterday = new Date(now.getTime() - 86400000);
+        return [dateStr(now), dateStr(yesterday)];
+    }
+
+    // 主源：h2dcc/zhihu-hotlist（纯文本：标题行 + 链接行，每日 6:00/18:00 更新）
+    function parsePlain(text) {
+        const items = [];
+        let time = '';
+        for (const ln of text.split('\n')) {
+            const h = ln.match(/生成时间[:：]\s*([^）)]+)/);
+            if (h) { time = h[1].trim(); continue; }
+            const m = ln.match(/^\d+\.\s+(\S.*)$/);
+            if (m) { items.push({ title: m[1].trim(), url: '' }); continue; }
+            const u = ln.match(/^\s*(https?:\/\/\S+)\s*$/);
+            if (u && items.length && !items[items.length - 1].url) items[items.length - 1].url = u[1];
+        }
+        return { time: time, items: items };
+    }
+    // 备源：lonnyzhang423/zhihu-hot-hub 归档 md（每小时更新）
+    function parseMd(text) {
+        const items = [];
+        const h = text.match(/最后更新时间[:：]\s*([^`\n]+)/);
+        const time = h ? h[1].trim() : '';
+        const re = /^\d+\.\s+\[([^\]]+)\]\(([^)]+)\)/gm;
+        let m;
+        while ((m = re.exec(text)) !== null) items.push({ title: m[1].trim(), url: m[2] });
+        return { time: time, items: items };
+    }
+
+    const SOURCES = [
+        {
+            name: '源：h2dcc/zhihu-hotlist · 每日 6:00 / 18:00 更新',
+            urls: [
+                GH_API + 'h2dcc/zhihu-hotlist/contents/zhihu-hotlist.txt',
+                JSD + 'h2dcc/zhihu-hotlist@main/zhihu-hotlist.txt',
+                RAW + 'h2dcc/zhihu-hotlist/main/zhihu-hotlist.txt'
+            ],
+            parse: parsePlain
+        },
+        {
+            name: '备用源：zhihu-hot-hub · 每小时更新',
+            urls: dateList().map(d => [
+                GH_API + 'lonnyzhang423/zhihu-hot-hub/contents/archives/' + d + '.md',
+                JSD + 'lonnyzhang423/zhihu-hot-hub@main/archives/' + d + '.md',
+                RAW + 'lonnyzhang423/zhihu-hot-hub/main/archives/' + d + '.md'
+            ]).reduce((a, b) => a.concat(b), []),
+            parse: parseMd
+        }
+    ];
+
+    async function fetchText(url) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 8000);
+        try {
+            const opts = { signal: ctrl.signal, cache: 'no-cache' };
+            if (url.indexOf('api.github.com/repos/') === 0) opts.headers = { Accept: 'application/vnd.github.raw' };
+            const r = await fetch(url, opts);
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return await r.text();
+        } finally { clearTimeout(timer); }
+    }
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    function render(data, sourceName) {
+        metaEl.textContent = (data.time ? '数据时间 ' + data.time + ' · ' : '') + sourceName;
+        listEl.innerHTML = data.items.map((it, i) =>
+            '<div class="news-item"><span class="news-idx">' + (i + 1) + '</span>' +
+            '<span><a href="' + esc(it.url) + '" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;">' +
+            esc(it.title) + ' ↗</a></span></div>'
+        ).join('');
+    }
+
+    async function load() {
+        if (loading) return;
+        loading = true;
+        listEl.innerHTML = '<div class="wx-loading">正在获取热榜…</div>';
+        outer:
+        for (const src of SOURCES) {
+            for (const u of src.urls) {
+                try {
+                    const data = src.parse(await fetchText(u));
+                    data.items = data.items.filter(it => /^https:\/\//.test(it.url));
+                    if (!data.items.length) continue;
+                    render(data, src.name);
+                    loading = false;
+                    return;
+                } catch (e) { /* 换下一个通道 */ }
+            }
+        }
+        loading = false;
+        metaEl.textContent = '数据源暂时不可用';
+        listEl.innerHTML = '<div class="wx-loading">☕ 热榜加载失败，点下方按钮重试</div>';
+    }
+
+    document.querySelector('.tool-tab[data-tool="zhihu"]').addEventListener('click', load);
+    document.getElementById('zhRefresh').addEventListener('click', load);
 })();
 
 // ===== 天气 =====
