@@ -683,15 +683,20 @@
 
         <!-- 大模型 -->
         <div class="tool-panel" id="tool-llm">
-            <h3>🤖 主流大模型 · AA 智能指数排行</h3>
-            <p class="panel-sub">按 Artificial Analysis 智能指数排序 · 数据采集于 2026-10-19</p>
+            <h3>🤖 各家旗舰大模型 · AA 智能指数排行</h3>
+            <p class="panel-sub">主流厂商当家模型在 Artificial Analysis 上的排名 · 数据采集于 2026-10-19</p>
             <div class="llm-filter">
                 <button class="llm-tag active" data-vendor="all">全部</button>
-                <button class="llm-tag" data-vendor="openai">OpenAI</button>
                 <button class="llm-tag" data-vendor="claude">Claude</button>
-                <button class="llm-tag" data-vendor="deepseek">DeepSeek</button>
-                <button class="llm-tag" data-vendor="glm">GLM</button>
+                <button class="llm-tag" data-vendor="openai">OpenAI</button>
+                <button class="llm-tag" data-vendor="google">Google</button>
+                <button class="llm-tag" data-vendor="meta">Meta</button>
+                <button class="llm-tag" data-vendor="spacexai">SpaceXAI</button>
                 <button class="llm-tag" data-vendor="kimi">Kimi</button>
+                <button class="llm-tag" data-vendor="glm">GLM</button>
+                <button class="llm-tag" data-vendor="deepseek">DeepSeek</button>
+                <button class="llm-tag" data-vendor="qwen">Qwen</button>
+                <button class="llm-tag" data-vendor="mistral">Mistral</button>
             </div>
             <div class="llm-wrap">
                 <table class="llm-table">
@@ -704,7 +709,7 @@
                     <tbody id="llmTableBody"></tbody>
                 </table>
             </div>
-            <div class="hint">按 AA（Artificial Analysis）智能指数由高到低排序 · 「AA 同类排名」为该模型在 AA 同价位 / 同规模比较组中的名次 · 点击模型名可跳转 AA 详情页 · 仅供参考</div>
+            <div class="hint">各家旗舰机型按 AA（Artificial Analysis）智能指数由高到低排序 · 「AA 同类排名」为该模型在 AA 比较组中的名次 · 点击模型名可跳转 AA 详情页 · 数据采集于 2026-10-19，仅供参考</div>
         </div>
 
         <!-- 购车计算 -->
@@ -1079,22 +1084,22 @@ function evalExpr(s) {
 // ===== 大模型 AA 排行 =====
 (function () {
     const AA_URL = 'https://artificialanalysis.ai/models/';
-    // 排名按 AA 智能指数降序（同分按 AA 名次），数据采集于 2026-10-19
+    // 各家旗舰模型，排名按 AA 智能指数降序（同分按 AA 名次），数据采集于 2026-10-19
     const LLM_RANK = [
-        { name: 'Claude Fable 5.1', vendor: 'claude', score: 53, rank: 5, total: 217, slug: 'claude-fable-5-1' },
-        { name: 'Claude Opus 5.0', vendor: 'claude', score: 51, rank: 17, total: 217, slug: 'claude-opus-5' },
-        { name: 'Claude Fable 5.0', vendor: 'claude', score: 50, rank: 20, total: 217, slug: 'claude-fable-5' },
-        { name: 'GPT-5.6 Sol', vendor: 'openai', score: 47, rank: 27, total: 217, slug: 'gpt-5-6-sol' },
+        { name: 'Claude Opus 5.5', vendor: 'claude', score: 58, rank: 1, total: 217, slug: 'claude-opus-5-5' },
+        { name: 'Claude Sonnet 5.5', vendor: 'claude', score: 56, rank: 2, total: 217, slug: 'claude-sonnet-5-5' },
+        { name: 'Muse Wonder Full', vendor: 'meta', score: 56, rank: 4, total: 694, slug: 'muse-wonder-full' },
+        { name: 'GPT-6 Astra', vendor: 'openai', score: 53, rank: 7, total: 217, slug: 'gpt-6-astra' },
+        { name: 'Gemini 4 Argon', vendor: 'google', score: 53, rank: 8, total: 217, slug: 'gemini-4-argon' },
+        { name: 'GPT-6.1 Sol', vendor: 'openai', score: 52, rank: 12, total: 217, slug: 'gpt-6-1-sol' },
+        { name: 'Grok 4.7', vendor: 'spacexai', score: 46, rank: 30, total: 217, slug: 'grok-4-7' },
         { name: 'GLM-5.3', vendor: 'glm', score: 45, rank: 2, total: 120, slug: 'glm-5-3' },
-        { name: 'Kimi-K3', vendor: 'kimi', score: 44, rank: 4, total: 120, slug: 'kimi-k3' },
-        { name: 'GLM-5.3-Flash', vendor: 'glm', score: 42, rank: 5, total: 120, slug: 'glm-5-3-flash' },
-        { name: 'GPT-5.6 Terra', vendor: 'openai', score: 42, rank: 49, total: 217, slug: 'gpt-5-6-terra' },
-        { name: 'Claude Opus 4.8', vendor: 'claude', score: 42, rank: 50, total: 217, slug: 'claude-opus-4-8' },
-        { name: 'GPT-5.6 Luna', vendor: 'openai', score: 37, rank: 11, total: 171, slug: 'gpt-5-6-luna' },
-        { name: 'DeepSeek-V4-Pro', vendor: 'deepseek', score: 36, rank: 12, total: 120, slug: 'deepseek-v4-pro' },
-        { name: 'DeepSeek-V4-Flash', vendor: 'deepseek', score: 34, rank: 13, total: 120, slug: 'deepseek-v4-flash' }
+        { name: 'Qwen3.8 Max', vendor: 'qwen', score: 45, rank: 33, total: 217, slug: 'qwen3-8-max' },
+        { name: 'Kimi K3', vendor: 'kimi', score: 44, rank: 4, total: 120, slug: 'kimi-k3' },
+        { name: 'DeepSeek V4.1 Flash', vendor: 'deepseek', score: 39, rank: 9, total: 120, slug: 'deepseek-v4-1-flash' },
+        { name: 'Mistral Large 4 Preview', vendor: 'mistral', score: 38, rank: 66, total: 217, slug: 'mistral-large-4' }
     ];
-    const VENDOR_NAME = { claude: 'Anthropic', openai: 'OpenAI', glm: 'Z AI', kimi: 'Kimi', deepseek: 'DeepSeek' };
+    const VENDOR_NAME = { claude: 'Anthropic', openai: 'OpenAI', google: 'Google', meta: 'Meta', spacexai: 'SpaceXAI', kimi: 'Kimi', glm: 'Z AI', deepseek: 'DeepSeek', qwen: 'Alibaba', mistral: 'Mistral' };
     function renderTable(vendor) {
         const filtered = vendor === 'all' ? LLM_RANK : LLM_RANK.filter(m => m.vendor === vendor);
         document.getElementById('llmTableBody').innerHTML = filtered.map(m =>
