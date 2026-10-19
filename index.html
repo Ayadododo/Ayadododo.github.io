@@ -697,6 +697,7 @@
                 <button class="llm-tag" data-vendor="glm">GLM</button>
                 <button class="llm-tag" data-vendor="deepseek">DeepSeek</button>
                 <button class="llm-tag" data-vendor="qwen">Qwen</button>
+                <button class="llm-tag" data-vendor="mimo">MiMo</button>
                 <button class="llm-tag" data-vendor="mistral">Mistral</button>
             </div>
             <div class="llm-wrap">
@@ -1098,18 +1099,19 @@ function evalExpr(s) {
     const LLM_RANK = [
         { name: 'Claude Opus 5.5', vendor: 'claude', score: 58, rank: 1, total: 217, slug: 'claude-opus-5-5' },
         { name: 'Claude Sonnet 5.5', vendor: 'claude', score: 56, rank: 2, total: 217, slug: 'claude-sonnet-5-5' },
-        { name: 'Muse Wonder Full', vendor: 'meta', score: 56, rank: 4, total: 694, slug: 'muse-wonder-full' },
+        { name: 'Muse Wonder Full', vendor: 'meta', score: 56, rank: 4, total: 695, slug: 'muse-wonder-full' },
         { name: 'GPT-6 Astra', vendor: 'openai', score: 53, rank: 7, total: 217, slug: 'gpt-6-astra' },
         { name: 'Gemini 4 Argon', vendor: 'google', score: 53, rank: 8, total: 217, slug: 'gemini-4-argon' },
         { name: 'GPT-6.1 Sol', vendor: 'openai', score: 52, rank: 12, total: 217, slug: 'gpt-6-1-sol' },
+        { name: 'MiMo-V2.6-Pro', vendor: 'mimo', score: 46, rank: 1, total: 121, slug: 'mimo-v2-6-pro' },
         { name: 'Grok 4.7', vendor: 'spacexai', score: 46, rank: 30, total: 217, slug: 'grok-4-7' },
-        { name: 'GLM-5.3', vendor: 'glm', score: 45, rank: 2, total: 120, slug: 'glm-5-3' },
+        { name: 'DeepSeek V4.1 Flash 1017', vendor: 'deepseek', score: 45, rank: 2, total: 121, slug: 'deepseek-v4-1-flash-1017' },
+        { name: 'GLM-5.3', vendor: 'glm', score: 45, rank: 3, total: 121, slug: 'glm-5-3' },
         { name: 'Qwen3.8 Max', vendor: 'qwen', score: 45, rank: 33, total: 217, slug: 'qwen3-8-max' },
-        { name: 'Kimi K3', vendor: 'kimi', score: 44, rank: 4, total: 120, slug: 'kimi-k3' },
-        { name: 'DeepSeek V4.1 Flash', vendor: 'deepseek', score: 39, rank: 9, total: 120, slug: 'deepseek-v4-1-flash' },
+        { name: 'Kimi K3', vendor: 'kimi', score: 44, rank: 5, total: 121, slug: 'kimi-k3' },
         { name: 'Mistral Large 4 Preview', vendor: 'mistral', score: 38, rank: 66, total: 217, slug: 'mistral-large-4' }
     ];
-    const VENDOR_NAME = { claude: 'Anthropic', openai: 'OpenAI', google: 'Google', meta: 'Meta', spacexai: 'SpaceXAI', kimi: 'Kimi', glm: 'Z AI', deepseek: 'DeepSeek', qwen: 'Alibaba', mistral: 'Mistral' };
+    const VENDOR_NAME = { claude: 'Anthropic', openai: 'OpenAI', google: 'Google', meta: 'Meta', spacexai: 'SpaceXAI', kimi: 'Kimi', glm: 'Z AI', deepseek: 'DeepSeek', qwen: 'Alibaba', mimo: 'Xiaomi', mistral: 'Mistral' };
     function renderTable(vendor) {
         const filtered = vendor === 'all' ? LLM_RANK : LLM_RANK.filter(m => m.vendor === vendor);
         document.getElementById('llmTableBody').innerHTML = filtered.map(m =>
